@@ -460,9 +460,20 @@ export default function ThumbnailStudio({ geminiApiKey, uploadPostKey, uploadUse
 
         <StepIndicator currentStep={step} />
 
+        {/* Gemini API Key Warning */}
+        {!geminiApiKey && (
+          <div className="mb-6 p-5 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-start gap-3">
+            <AlertCircle size={20} className="text-amber-400 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-amber-300">Gemini API Key Required</p>
+              <p className="text-xs text-amber-400/70 mt-1">YouTube Studio requires a Google Gemini API key to function. Please configure it in the <strong>Settings</strong> tab before using this feature. Gemini's free tier includes 1,500 requests per day.</p>
+            </div>
+          </div>
+        )}
+
         {/* ===== STEP 0: Input Mode Selection ===== */}
         {step === 0 && (
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className={`grid md:grid-cols-2 gap-6 ${!geminiApiKey ? 'opacity-50 pointer-events-none select-none' : ''}`}>
             {/* Mode A: Video Analysis */}
             <div className="glass-panel p-6 space-y-4">
               <div className="flex items-center gap-3 mb-2">

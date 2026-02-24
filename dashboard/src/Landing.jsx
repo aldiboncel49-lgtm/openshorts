@@ -1,0 +1,510 @@
+import React from 'react';
+import { Sparkles, Zap, Globe, FileVideo, Subtitles, Youtube, Instagram, Shield, Github, ArrowRight, Play, Check, ChevronDown, Monitor, Cpu, Languages, Type, Upload, Scissors } from 'lucide-react';
+
+const TikTokIcon = ({ size = 16, className = "" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <path d="M19.589 6.686a4.793 4.793 0 0 1-3.77-4.245V2h-3.445v13.672a2.896 2.896 0 0 1-5.201 1.743l-.002-.001.002.001a2.895 2.895 0 0 1 3.183-4.51v-3.5a6.329 6.329 0 0 0-5.394 10.692 6.33 6.33 0 0 0 10.857-4.424V8.687a8.182 8.182 0 0 0 4.773 1.526V6.79a4.831 4.831 0 0 1-1.003-.104z" />
+  </svg>
+);
+
+const FeatureCard = ({ icon: Icon, title, description }) => (
+  <div className="group bg-surface/50 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5">
+    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+      <Icon size={24} className="text-primary" />
+    </div>
+    <h3 className="text-lg font-semibold text-white mb-2">{title}</h3>
+    <p className="text-zinc-400 text-sm leading-relaxed">{description}</p>
+  </div>
+);
+
+const StepCard = ({ number, title, description }) => (
+  <div className="flex gap-4">
+    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center text-primary font-bold text-sm">
+      {number}
+    </div>
+    <div>
+      <h3 className="text-white font-semibold mb-1">{title}</h3>
+      <p className="text-zinc-400 text-sm leading-relaxed">{description}</p>
+    </div>
+  </div>
+);
+
+const ComparisonRow = ({ feature, openshorts, opusclip, kapwing }) => (
+  <tr className="border-b border-white/5">
+    <td className="py-3 px-4 text-sm text-zinc-300">{feature}</td>
+    <td className="py-3 px-4 text-center">{openshorts}</td>
+    <td className="py-3 px-4 text-center">{opusclip}</td>
+    <td className="py-3 px-4 text-center">{kapwing}</td>
+  </tr>
+);
+
+const FAQItem = ({ question, answer, isOpen, onClick }) => (
+  <div className="border border-white/10 rounded-xl overflow-hidden">
+    <button
+      onClick={onClick}
+      className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-white/5 transition-colors"
+    >
+      <span className="text-white font-medium pr-4">{question}</span>
+      <ChevronDown size={18} className={`text-zinc-400 flex-shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+    </button>
+    {isOpen && (
+      <div className="px-6 pb-5">
+        <p className="faq-answer text-zinc-400 text-sm leading-relaxed">{answer}</p>
+      </div>
+    )}
+  </div>
+);
+
+export default function Landing({ onLaunchApp }) {
+  const [openFaq, setOpenFaq] = React.useState(null);
+
+  const features = [
+    {
+      icon: Sparkles,
+      title: "AI Viral Moment Detection",
+      description: "Google Gemini 3.0 Flash analyzes your video to find the 3-15 most engaging moments. Each clip is scored for viral potential based on emotional impact, hook strength, and shareability."
+    },
+    {
+      icon: Scissors,
+      title: "Smart 9:16 Vertical Cropping",
+      description: "Dual-mode AI reframing: TRACK mode follows subjects with MediaPipe face detection + YOLOv8 fallback. GENERAL mode creates blurred backgrounds for group shots and landscapes."
+    },
+    {
+      icon: Subtitles,
+      title: "Automatic Subtitle Generation",
+      description: "Powered by faster-whisper with word-level timestamps. Subtitles are generated, styled, and burned directly into your clips — no manual editing required."
+    },
+    {
+      icon: Languages,
+      title: "AI Voice Dubbing in 30+ Languages",
+      description: "ElevenLabs AI integration translates and dubs your video audio while preserving the original speaker's voice. Dubbed clips are automatically re-transcribed and subtitled."
+    },
+    {
+      icon: Type,
+      title: "Hook Text Overlays",
+      description: "Add attention-grabbing text overlays with styled fonts. AI-generated hook titles capture viewers in the first 3 seconds — critical for TikTok and Reels engagement."
+    },
+    {
+      icon: Zap,
+      title: "AI Video Effects",
+      description: "Google Gemini generates dynamic FFmpeg filters for professional video effects — color grading, transitions, and visual enhancements applied automatically."
+    },
+    {
+      icon: Upload,
+      title: "YouTube URL or Local Upload",
+      description: "Paste any YouTube URL or upload a local video file. yt-dlp handles downloads at maximum quality while preserving original resolution and audio."
+    },
+    {
+      icon: Shield,
+      title: "100% Self-Hosted & Private",
+      description: "Deploy with Docker on your own machine. Your videos never leave your infrastructure. API keys are encrypted client-side and never stored on the server."
+    },
+    {
+      icon: Monitor,
+      title: "AI YouTube Thumbnail Studio",
+      description: "Built-in YouTube Studio generates viral titles, AI thumbnails, and descriptions with chapter timestamps. Upload a face photo and background for personalized results. Publish directly to YouTube from one workflow."
+    },
+    {
+      icon: Globe,
+      title: "Direct Social Publishing",
+      description: "Post directly to TikTok, Instagram Reels, and YouTube Shorts from the dashboard. Async uploads with progress tracking and S3 cloud backup."
+    }
+  ];
+
+  const steps = [
+    { title: "Paste a YouTube URL or Upload a Video", description: "Drop any YouTube link or upload a local video file. OpenShorts supports all common formats and resolutions." },
+    { title: "AI Detects the Best Viral Moments", description: "Google Gemini 3.0 Flash transcribes, analyzes scene boundaries, and identifies 3-15 high-potential clips of 15-60 seconds each." },
+    { title: "Smart Cropping to Vertical 9:16", description: "AI reframes each clip to vertical format with face tracking. Subjects stay centered with stabilized camera movement — no manual positioning." },
+    { title: "Add Subtitles, Hooks & Effects", description: "Auto-generate styled subtitles, add hook text overlays, and apply AI video effects. Optionally dub into 30+ languages." },
+    { title: "Download or Post to Social Media", description: "Export your viral-ready clips or post directly to TikTok, Instagram Reels, and YouTube Shorts from the dashboard." }
+  ];
+
+  const faqs = [
+    {
+      question: "What is OpenShorts and how does it work?",
+      answer: "OpenShorts is a free, open source AI-powered video clipping tool that transforms long YouTube videos or local uploads into viral-ready short clips in 9:16 vertical format. It uses a multi-step AI pipeline: faster-whisper for transcription with word-level timestamps, PySceneDetect for scene boundary detection, and Google Gemini 3.0 Flash for identifying the most engaging viral moments. According to content creator studies, repurposing long-form content into shorts can increase total reach by up to 300%."
+    },
+    {
+      question: "Is OpenShorts really free? What's the catch?",
+      answer: "OpenShorts is 100% free and open source. You self-host it using Docker on your own machine or server. It uses three external APIs — all with free tiers. Google Gemini API (required) powers the AI analysis, viral moment detection, and thumbnail generation — its free tier includes 1,500 requests per day. ElevenLabs API (optional) enables AI voice dubbing in 30+ languages — free tier included. Upload-Post API (optional) allows direct publishing to YouTube, TikTok, and Instagram — also free tier. There are no watermarks, no usage limits, no monthly subscriptions, and no per-video fees — unlike Opus Clip ($15-228/month) or Kapwing ($24-79/month)."
+    },
+    {
+      question: "How does OpenShorts compare to Opus Clip?",
+      answer: "OpenShorts is a free, self-hosted alternative to Opus Clip. Both offer AI viral moment detection and smart vertical cropping. Key differences: OpenShorts is completely free vs Opus Clip's $15-228/month pricing. OpenShorts runs on your infrastructure (full data privacy) vs cloud-only. OpenShorts uses Google Gemini 3.0 Flash for AI analysis vs Opus Clip's proprietary model. OpenShorts adds AI voice dubbing in 30+ languages, AI-generated video effects, and hook text overlays. The trade-off is that OpenShorts requires Docker self-hosting, while Opus Clip is a ready-to-use cloud service."
+    },
+    {
+      question: "How do I convert a YouTube video to TikTok or Reels?",
+      answer: "Simply paste the YouTube URL into OpenShorts, select your Gemini API key, and click Process. The AI automatically downloads the video, transcribes it, detects the best viral moments, crops them to 9:16 vertical format with face tracking, and generates clips ready for TikTok and Instagram Reels. You can then add subtitles, hook overlays, and AI effects before downloading or posting directly to social media from the dashboard."
+    },
+    {
+      question: "What AI does OpenShorts use for viral moment detection?",
+      answer: "OpenShorts uses Google Gemini 3.0 Flash, Google's latest multimodal AI model, for viral moment detection and title generation. The AI receives the full video transcript with timestamps, scene boundary data from PySceneDetect, and analyzes engagement patterns to identify the 3-15 most shareable moments. Each clip is scored based on emotional impact, hook strength, and viral potential — similar to how platforms like TikTok and YouTube rank content."
+    },
+    {
+      question: "Can OpenShorts translate and dub videos into other languages?",
+      answer: "Yes. OpenShorts integrates with ElevenLabs AI dubbing to translate your video audio into over 30 languages while preserving the original speaker's voice characteristics. After dubbing, the system automatically re-transcribes the new audio and generates subtitles in the target language. This makes it easy to repurpose content for global audiences — studies show that dubbed content receives 2-3x more engagement in non-English markets."
+    },
+    {
+      question: "How does the smart vertical cropping work?",
+      answer: "OpenShorts offers two intelligent cropping modes for converting 16:9 horizontal video to 9:16 vertical format. TRACK mode uses MediaPipe face detection with YOLOv8 as fallback to follow a single subject with 'Heavy Tripod' stabilization — the camera moves smoothly like a professional cameraman. GENERAL mode handles group shots and landscapes by creating a blurred background layout. A SpeakerTracker prevents rapid switching between subjects and handles temporary occlusions for smooth results."
+    },
+    {
+      question: "Can OpenShorts generate YouTube thumbnails and titles?",
+      answer: "Yes. OpenShorts includes a built-in YouTube Studio with AI-powered thumbnail generation. Upload your video and Gemini 3.0 Flash analyzes the content to suggest 10 viral title options with an interactive refinement chat. Then it generates multiple thumbnail designs using AI image generation — you can upload a face photo and background image for personalized results. The studio also auto-generates YouTube descriptions with chapter timestamps from the video transcript and lets you publish directly to YouTube, all from a single workflow."
+    },
+    {
+      question: "What are the system requirements to run OpenShorts?",
+      answer: "OpenShorts runs on any system with Docker installed. The recommended setup is 8GB+ RAM and a modern multi-core CPU. GPU acceleration (NVIDIA CUDA) is optional but speeds up video processing significantly. The Docker Compose setup handles all dependencies automatically — Python 3.11, FFmpeg, YOLOv8, MediaPipe, faster-whisper, and the React dashboard. It works on Linux, macOS, and Windows (via WSL2/Docker Desktop)."
+    }
+  ];
+
+  const checkIcon = <Check size={16} className="text-green-400 mx-auto" />;
+  const xIcon = <span className="text-zinc-500 text-sm">Paid</span>;
+
+  return (
+    <div className="min-h-screen bg-background text-white">
+      {/* Navigation */}
+      <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-xl border-b border-white/5">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img src="/logo-openshorts.png" alt="OpenShorts logo" className="w-8 h-8" />
+            <span className="text-lg font-bold">OpenShorts</span>
+          </div>
+          <div className="hidden md:flex items-center gap-8 text-sm text-zinc-400">
+            <a href="#features" className="hover:text-white transition-colors">Features</a>
+            <a href="#how-it-works" className="hover:text-white transition-colors">How It Works</a>
+            <a href="#comparison" className="hover:text-white transition-colors">Comparison</a>
+            <a href="#faq" className="hover:text-white transition-colors">FAQ</a>
+          </div>
+          <div className="flex items-center gap-3">
+            <a
+              href="https://github.com/mutonby/openshorts"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden sm:flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors"
+            >
+              <Github size={18} />
+              <span>GitHub</span>
+            </a>
+            <button
+              onClick={onLaunchApp}
+              className="bg-primary hover:bg-blue-600 text-white px-5 py-2 rounded-xl text-sm font-medium transition-all active:scale-[0.98] shadow-lg shadow-primary/20"
+            >
+              Launch App
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <section className="pt-32 pb-20 px-6">
+        <div className="max-w-5xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-1.5 text-sm text-primary mb-8">
+            <Sparkles size={14} />
+            <span>Free & Open Source AI Video Clipping Tool</span>
+          </div>
+
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 tracking-tight">
+            Turn Long Videos into
+            <span className="bg-gradient-to-r from-primary via-purple-400 to-pink-500 bg-clip-text text-transparent"> Viral Shorts </span>
+            with AI
+          </h1>
+
+          <p className="hero-description text-lg md:text-xl text-zinc-400 max-w-3xl mx-auto mb-10 leading-relaxed">
+            OpenShorts uses Google Gemini 3.0 Flash AI to automatically detect viral moments in your videos and transform them into 9:16 clips ready for TikTok, Instagram Reels, and YouTube Shorts. Smart face-tracking cropping, auto subtitles, AI voice dubbing in 30+ languages, and AI YouTube thumbnail generation. Self-hosted, no watermarks, no limits. All APIs have free tiers.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+            <button
+              onClick={onLaunchApp}
+              className="flex items-center gap-2 bg-primary hover:bg-blue-600 text-white px-8 py-3.5 rounded-xl font-medium transition-all active:scale-[0.98] shadow-lg shadow-primary/20 text-lg"
+            >
+              Get Started Free
+              <ArrowRight size={20} />
+            </button>
+            <a
+              href="https://github.com/mutonby/openshorts"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 bg-white/5 border border-white/10 text-white px-8 py-3.5 rounded-xl font-medium transition-all hover:bg-white/10 text-lg"
+            >
+              <Github size={20} />
+              View on GitHub
+            </a>
+          </div>
+
+          {/* Platform Icons */}
+          <div className="flex items-center justify-center gap-6 text-zinc-500">
+            <span className="text-sm">Export to:</span>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-1.5 text-zinc-400">
+                <TikTokIcon size={18} />
+                <span className="text-sm">TikTok</span>
+              </div>
+              <div className="flex items-center gap-1.5 text-zinc-400">
+                <Instagram size={18} />
+                <span className="text-sm">Reels</span>
+              </div>
+              <div className="flex items-center gap-1.5 text-zinc-400">
+                <Youtube size={18} />
+                <span className="text-sm">Shorts</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Bar */}
+      <section className="border-y border-white/5 bg-surface/30">
+        <div className="max-w-5xl mx-auto px-6 py-10 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          <div>
+            <div className="text-3xl font-bold text-white">100%</div>
+            <div className="text-sm text-zinc-400 mt-1">Free & Open Source</div>
+          </div>
+          <div>
+            <div className="text-3xl font-bold text-white">30+</div>
+            <div className="text-sm text-zinc-400 mt-1">Dubbing Languages</div>
+          </div>
+          <div>
+            <div className="text-3xl font-bold text-white">9:16</div>
+            <div className="text-sm text-zinc-400 mt-1">Vertical Format</div>
+          </div>
+          <div>
+            <div className="text-3xl font-bold text-white">$0</div>
+            <div className="text-sm text-zinc-400 mt-1">No Watermarks</div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section id="features" className="py-20 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-14">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Everything You Need to Create Viral Shorts</h2>
+            <p className="text-zinc-400 max-w-2xl mx-auto">A complete AI-powered pipeline from long-form video to viral short clips. No manual editing, no video editing skills required.</p>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {features.map((feature, i) => (
+              <FeatureCard key={i} {...feature} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* API Keys Section */}
+      <section className="py-20 px-6 bg-surface/20">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-14">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">All APIs Have Free Tiers</h2>
+            <p className="text-zinc-400 max-w-2xl mx-auto">OpenShorts uses three external APIs — all with generous free tiers. Only Gemini is required. Your API keys are encrypted client-side and never stored on the server.</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-5">
+            <div className="bg-surface/50 border border-white/10 rounded-2xl p-6 relative">
+              <div className="absolute top-4 right-4 bg-primary/20 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full border border-primary/30">REQUIRED</div>
+              <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center mb-4">
+                <Cpu size={24} className="text-blue-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-1">Google Gemini API</h3>
+              <span className="inline-block text-xs text-green-400 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full mb-3">Free tier: 1,500 req/day</span>
+              <p className="text-zinc-400 text-sm leading-relaxed">Powers all AI features: viral moment detection, title generation, video effects, YouTube thumbnail creation, and description writing. The core engine of OpenShorts.</p>
+            </div>
+            <div className="bg-surface/50 border border-white/10 rounded-2xl p-6 relative">
+              <div className="absolute top-4 right-4 bg-zinc-700/50 text-zinc-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-zinc-600/30">OPTIONAL</div>
+              <div className="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center mb-4">
+                <Languages size={24} className="text-purple-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-1">ElevenLabs API</h3>
+              <span className="inline-block text-xs text-green-400 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full mb-3">Free tier included</span>
+              <p className="text-zinc-400 text-sm leading-relaxed">Enables AI voice dubbing and translation in 30+ languages. Preserves the original speaker's voice while translating audio. Dubbed clips are auto-subtitled.</p>
+            </div>
+            <div className="bg-surface/50 border border-white/10 rounded-2xl p-6 relative">
+              <div className="absolute top-4 right-4 bg-zinc-700/50 text-zinc-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-zinc-600/30">OPTIONAL</div>
+              <div className="w-12 h-12 rounded-xl bg-pink-500/10 flex items-center justify-center mb-4">
+                <Globe size={24} className="text-pink-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-1">Upload-Post API</h3>
+              <span className="inline-block text-xs text-green-400 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full mb-3">Free tier included</span>
+              <p className="text-zinc-400 text-sm leading-relaxed">Enables direct publishing to YouTube, TikTok, and Instagram Reels from the dashboard. Post your clips and thumbnails without leaving OpenShorts.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section id="how-it-works" className="py-20 px-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-14">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">How It Works</h2>
+            <p className="text-zinc-400 max-w-2xl mx-auto">From a YouTube URL to viral-ready clips in 5 automated steps. The entire pipeline runs on your machine with AI doing the heavy lifting.</p>
+          </div>
+          <div className="space-y-8">
+            {steps.map((step, i) => (
+              <StepCard key={i} number={i + 1} {...step} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Tech Stack */}
+      <section className="py-20 px-6">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-14">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Built with Proven Technology</h2>
+            <p className="text-zinc-400 max-w-2xl mx-auto">OpenShorts combines industry-leading AI models and open source tools into a production-ready video processing pipeline.</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { name: "Google Gemini 3.0", desc: "AI Analysis" },
+              { name: "faster-whisper", desc: "Transcription" },
+              { name: "YOLOv8", desc: "Object Detection" },
+              { name: "MediaPipe", desc: "Face Tracking" },
+              { name: "FFmpeg", desc: "Video Processing" },
+              { name: "ElevenLabs", desc: "Voice Dubbing" },
+              { name: "React + Vite", desc: "Dashboard" },
+              { name: "Docker", desc: "Deployment" }
+            ].map((tech, i) => (
+              <div key={i} className="bg-surface/50 border border-white/10 rounded-xl p-4 text-center">
+                <div className="text-white font-medium text-sm">{tech.name}</div>
+                <div className="text-zinc-500 text-xs mt-1">{tech.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Comparison Table */}
+      <section id="comparison" className="py-20 px-6 bg-surface/20">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-14">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">OpenShorts vs Paid Alternatives</h2>
+            <p className="text-zinc-400 max-w-2xl mx-auto">Why pay $15-228/month for AI video clipping when you can self-host the same capabilities for free? According to G2 reviews, content creators spend an average of $50-150/month on video repurposing tools.</p>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-white/10">
+                  <th className="py-3 px-4 text-left text-sm text-zinc-400 font-medium">Feature</th>
+                  <th className="py-3 px-4 text-center text-sm font-medium">
+                    <span className="text-primary">OpenShorts</span>
+                  </th>
+                  <th className="py-3 px-4 text-center text-sm text-zinc-400 font-medium">Opus Clip</th>
+                  <th className="py-3 px-4 text-center text-sm text-zinc-400 font-medium">Kapwing</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ComparisonRow feature="Price" openshorts={<span className="text-green-400 font-semibold">$0 Free</span>} opusclip={xIcon} kapwing={xIcon} />
+                <ComparisonRow feature="AI Viral Moment Detection" openshorts={checkIcon} opusclip={checkIcon} kapwing={checkIcon} />
+                <ComparisonRow feature="Smart Vertical Cropping" openshorts={checkIcon} opusclip={checkIcon} kapwing={checkIcon} />
+                <ComparisonRow feature="Auto Subtitles" openshorts={checkIcon} opusclip={checkIcon} kapwing={checkIcon} />
+                <ComparisonRow feature="AI Voice Dubbing (30+ langs)" openshorts={checkIcon} opusclip={<span className="text-zinc-500 text-sm">Limited</span>} kapwing={<span className="text-zinc-500 text-sm">No</span>} />
+                <ComparisonRow feature="AI Video Effects" openshorts={checkIcon} opusclip={<span className="text-zinc-500 text-sm">No</span>} kapwing={checkIcon} />
+                <ComparisonRow feature="Hook Text Overlays" openshorts={checkIcon} opusclip={checkIcon} kapwing={checkIcon} />
+                <ComparisonRow feature="Self-Hosted / Privacy" openshorts={checkIcon} opusclip={<span className="text-zinc-500 text-sm">Cloud only</span>} kapwing={<span className="text-zinc-500 text-sm">Cloud only</span>} />
+                <ComparisonRow feature="No Watermark" openshorts={checkIcon} opusclip={<span className="text-zinc-500 text-sm">Free tier only</span>} kapwing={<span className="text-zinc-500 text-sm">Paid</span>} />
+                <ComparisonRow feature="Open Source" openshorts={checkIcon} opusclip={<span className="text-zinc-500 text-sm">No</span>} kapwing={<span className="text-zinc-500 text-sm">No</span>} />
+                <ComparisonRow feature="Usage Limits" openshorts={<span className="text-green-400 text-sm">Unlimited</span>} opusclip={<span className="text-zinc-500 text-sm">Per plan</span>} kapwing={<span className="text-zinc-500 text-sm">Per plan</span>} />
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      {/* Use Cases */}
+      <section className="py-20 px-6">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-14">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Who Uses OpenShorts?</h2>
+            <p className="text-zinc-400 max-w-2xl mx-auto">Content creators, marketers, and agencies use OpenShorts to scale their short-form video production. According to HubSpot's 2025 report, short-form video is the #1 content format with the highest ROI.</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-5">
+            {[
+              {
+                title: "YouTubers & Content Creators",
+                description: "Repurpose your long YouTube videos into TikTok and Reels clips automatically. Reach new audiences on every platform without extra editing work.",
+                icon: Youtube
+              },
+              {
+                title: "Social Media Managers",
+                description: "Scale short-form content production for multiple clients. Process videos in batch and publish directly to TikTok, Reels, and Shorts from one dashboard.",
+                icon: Instagram
+              },
+              {
+                title: "Podcasters & Educators",
+                description: "Extract the most engaging moments from podcast episodes and educational content. AI finds the highlights that drive the most engagement and shares.",
+                icon: FileVideo
+              }
+            ].map((useCase, i) => (
+              <div key={i} className="bg-surface/50 border border-white/10 rounded-2xl p-6">
+                <useCase.icon size={24} className="text-primary mb-4" />
+                <h3 className="text-lg font-semibold text-white mb-2">{useCase.title}</h3>
+                <p className="text-zinc-400 text-sm leading-relaxed">{useCase.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section id="faq" className="py-20 px-6 bg-surface/20">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-14">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
+            <p className="text-zinc-400">Everything you need to know about OpenShorts, from setup to features.</p>
+          </div>
+          <div className="space-y-3">
+            {faqs.map((faq, i) => (
+              <FAQItem
+                key={i}
+                question={faq.question}
+                answer={faq.answer}
+                isOpen={openFaq === i}
+                onClick={() => setOpenFaq(openFaq === i ? null : i)}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 px-6">
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Start Creating Viral Shorts for Free</h2>
+          <p className="text-zinc-400 mb-8 max-w-xl mx-auto">No sign-up, no credit card, no watermarks. Self-host OpenShorts with Docker and start turning your long videos into viral content today.</p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button
+              onClick={onLaunchApp}
+              className="flex items-center gap-2 bg-primary hover:bg-blue-600 text-white px-8 py-3.5 rounded-xl font-medium transition-all active:scale-[0.98] shadow-lg shadow-primary/20 text-lg"
+            >
+              Launch OpenShorts
+              <ArrowRight size={20} />
+            </button>
+            <a
+              href="https://github.com/mutonby/openshorts"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors text-sm"
+            >
+              <Github size={18} />
+              Star on GitHub
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-white/5 py-10 px-6">
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <img src="/logo-openshorts.png" alt="OpenShorts" className="w-6 h-6" />
+            <span className="text-sm text-zinc-400">OpenShorts — Free Open Source AI Video Clipping Tool</span>
+          </div>
+          <div className="flex items-center gap-6 text-sm text-zinc-500">
+            <a href="https://github.com/mutonby/openshorts" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">GitHub</a>
+            <a href="#features" className="hover:text-white transition-colors">Features</a>
+            <a href="#faq" className="hover:text-white transition-colors">FAQ</a>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}

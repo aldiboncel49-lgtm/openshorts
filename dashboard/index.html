@@ -4,7 +4,162 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/logo-openshorts.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>OpenShorts.app</title>
+
+    <!-- Primary SEO Meta Tags -->
+    <title>OpenShorts - Free Open Source AI Video Clipping Tool | YouTube to TikTok & Reels</title>
+    <meta name="description" content="Turn long YouTube videos into viral TikTok, Instagram Reels & YouTube Shorts automatically. AI-powered viral moment detection, smart 9:16 cropping with face tracking, auto subtitles, 30+ language dubbing & AI thumbnail generation. Free & open source — all APIs have free tiers." />
+    <meta name="keywords" content="AI video clipping tool, YouTube to TikTok converter, AI short video generator, vertical video maker, open source video editor, YouTube Shorts maker, Instagram Reels creator, video repurposing tool, AI viral moment detection, auto subtitle generator, AI voice dubbing, Opus Clip alternative free" />
+    <meta name="author" content="OpenShorts" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <link rel="canonical" href="https://openshorts.app" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://openshorts.app" />
+    <meta property="og:title" content="OpenShorts - Free AI Video Clipping Tool | YouTube to Shorts & Reels" />
+    <meta property="og:description" content="Turn long videos into viral shorts automatically with AI. Smart cropping, face tracking, auto subtitles & 30+ language dubbing. 100% free & open source." />
+    <meta property="og:image" content="https://openshorts.app/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="OpenShorts" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://openshorts.app" />
+    <meta name="twitter:title" content="OpenShorts - Free AI Video Clipping Tool | YouTube to TikTok & Reels" />
+    <meta name="twitter:description" content="Turn long videos into viral shorts with AI. Smart 9:16 cropping, face tracking, auto subtitles & voice dubbing. Open source & free." />
+    <meta name="twitter:image" content="https://openshorts.app/og-image.png" />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebPage",
+          "name": "OpenShorts - Free Open Source AI Video Clipping Tool",
+          "description": "Turn long YouTube videos into viral TikTok, Instagram Reels & YouTube Shorts automatically with AI-powered viral moment detection and smart cropping.",
+          "url": "https://openshorts.app",
+          "datePublished": "2024-06-01",
+          "dateModified": "2026-02-24",
+          "inLanguage": "en-US",
+          "speakable": {
+            "@type": "SpeakableSpecification",
+            "cssSelector": ["h1", ".hero-description", ".faq-answer"]
+          }
+        },
+        {
+          "@type": "SoftwareApplication",
+          "name": "OpenShorts",
+          "description": "Open source AI-powered vertical video generator. Transforms long YouTube videos into viral-ready short clips for TikTok, Instagram Reels, and YouTube Shorts using Google Gemini AI for viral moment detection.",
+          "applicationCategory": "MultimediaApplication",
+          "operatingSystem": "Cross-platform (Docker)",
+          "url": "https://openshorts.app",
+          "downloadUrl": "https://github.com/mutonby/openshorts",
+          "softwareVersion": "2.0",
+          "screenshot": "https://openshorts.app/og-image.png",
+          "featureList": [
+            "AI viral moment detection with Google Gemini 3.0 Flash",
+            "Smart 9:16 vertical cropping with face tracking",
+            "Automatic subtitle generation with word-level timestamps",
+            "AI voice dubbing in 30+ languages via ElevenLabs",
+            "YouTube download and local file upload support",
+            "Hook text overlays with styled fonts",
+            "AI-generated video effects via FFmpeg",
+            "Direct social media posting",
+            "AI YouTube thumbnail generation with title suggestions",
+            "YouTube Studio: viral titles, descriptions & direct publishing",
+            "S3 cloud backup",
+            "Self-hosted Docker deployment"
+          ],
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD",
+            "availability": "https://schema.org/InStock"
+          },
+          "author": {
+            "@type": "Organization",
+            "name": "OpenShorts",
+            "url": "https://openshorts.app"
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What is OpenShorts?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "OpenShorts is a free, open source AI-powered tool that automatically transforms long YouTube videos or local uploads into viral-ready short clips (9:16 vertical format) for TikTok, Instagram Reels, and YouTube Shorts. It uses Google Gemini 3.0 Flash AI to detect the most engaging viral moments, then applies smart cropping with face tracking, automatic subtitles, and optional AI voice dubbing in over 30 languages."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How does OpenShorts detect viral moments in videos?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "OpenShorts uses a multi-step AI pipeline: first, it transcribes the video with word-level timestamps using faster-whisper. Then, PySceneDetect identifies scene boundaries. Finally, Google Gemini 3.0 Flash AI analyzes the transcript and scene data to identify the 3 to 15 most engaging moments (15-60 seconds each), scoring them for viral potential based on emotional impact, hook strength, and shareability."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is OpenShorts really free? What's the catch?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "OpenShorts is 100% free and open source. You self-host it using Docker on your own machine or server. It uses three external APIs — all with free tiers. Google Gemini API (required) powers AI analysis, viral moment detection, and thumbnail generation — free tier includes 1,500 requests per day. ElevenLabs API (optional) enables AI voice dubbing in 30+ languages — free tier included. Upload-Post API (optional) allows direct publishing to YouTube, TikTok, and Instagram — also free tier. There are no watermarks, no usage limits, and no subscription fees."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How does the AI vertical cropping work?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "OpenShorts offers two intelligent cropping modes. TRACK mode uses MediaPipe face detection with YOLOv8 fallback to follow a single subject with stabilized 'Heavy Tripod' camera movement, preventing jitter. GENERAL mode handles group shots and landscapes by creating a blurred background layout that preserves the full width. A SpeakerTracker prevents rapid switching between subjects for smooth, professional results."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is there a free alternative to Opus Clip?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. OpenShorts is a free, open source alternative to Opus Clip that you can self-host. Unlike Opus Clip's $15-228/month pricing, OpenShorts is completely free with no watermarks or usage limits. It offers comparable AI viral moment detection powered by Google Gemini, smart vertical cropping with face tracking, automatic subtitles, and AI voice dubbing — all running on your own infrastructure with full data privacy."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Can OpenShorts add subtitles and translate videos?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. OpenShorts automatically generates subtitles using faster-whisper with word-level timestamps and burns them into the video using FFmpeg. For translation, it integrates with ElevenLabs AI dubbing to translate and dub video audio into over 30 languages, preserving the original speaker's voice characteristics. The dubbed video is automatically re-transcribed and subtitled in the new language."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Can OpenShorts generate YouTube thumbnails and titles?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. OpenShorts includes a built-in YouTube Studio with AI-powered thumbnail generation. Upload your video and Gemini 3.0 Flash analyzes the content to suggest 10 viral title options with an interactive refinement chat. Then it generates multiple thumbnail designs using AI image generation — you can upload a face photo and background image for personalized results. The studio also auto-generates YouTube descriptions with chapter timestamps from the video transcript and lets you publish directly to YouTube, all from a single workflow."
+              }
+            }
+          ]
+        },
+        {
+          "@type": "Organization",
+          "name": "OpenShorts",
+          "url": "https://openshorts.app",
+          "logo": "https://openshorts.app/logo-openshorts.png",
+          "sameAs": [
+            "https://github.com/mutonby/openshorts"
+          ]
+        }
+      ]
+    }
+    </script>
+
+    <!-- Analytics -->
     <script defer data-domain="openshorts.app" src="https://analytics.fotoexamen.com/js/script.js"></script>
   </head>
   <body>
