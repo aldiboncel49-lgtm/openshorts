@@ -101,8 +101,8 @@ export default function Landing({ onLaunchApp }) {
     },
     {
       icon: Monitor,
-      title: "AI YouTube Thumbnail Studio",
-      description: "Built-in YouTube Studio generates viral titles, AI thumbnails, and descriptions with chapter timestamps. Upload a face photo and background for personalized results. Publish directly to YouTube from one workflow."
+      title: "Free AI YouTube Studio",
+      description: "Free AI YouTube thumbnail generator, AI title suggestions (10 viral options with refinement chat), and auto-generated descriptions with chapter timestamps — all free. Upload a face photo for personalized thumbnails. Publish directly to YouTube from one workflow."
     },
     {
       icon: Globe,
@@ -149,12 +149,16 @@ export default function Landing({ onLaunchApp }) {
       answer: "OpenShorts offers two intelligent cropping modes for converting 16:9 horizontal video to 9:16 vertical format. TRACK mode uses MediaPipe face detection with YOLOv8 as fallback to follow a single subject with 'Heavy Tripod' stabilization — the camera moves smoothly like a professional cameraman. GENERAL mode handles group shots and landscapes by creating a blurred background layout. A SpeakerTracker prevents rapid switching between subjects and handles temporary occlusions for smooth results."
     },
     {
-      question: "Can OpenShorts generate YouTube thumbnails and titles?",
-      answer: "Yes. OpenShorts includes a built-in YouTube Studio with AI-powered thumbnail generation. Upload your video and Gemini 3.0 Flash analyzes the content to suggest 10 viral title options with an interactive refinement chat. Then it generates multiple thumbnail designs using AI image generation — you can upload a face photo and background image for personalized results. The studio also auto-generates YouTube descriptions with chapter timestamps from the video transcript and lets you publish directly to YouTube, all from a single workflow."
+      question: "Can OpenShorts generate YouTube thumbnails and titles for free?",
+      answer: "Yes. OpenShorts includes a free AI YouTube thumbnail generator, a free AI YouTube title generator, and a free AI YouTube description generator — all powered by Google Gemini 3.0 Flash. Upload your video and the AI suggests 10 viral title options with an interactive refinement chat. Then it generates multiple thumbnail designs using AI image generation — upload a face photo and background image for personalized results. The studio also auto-generates YouTube descriptions with chapter timestamps and lets you publish directly to YouTube. Everything is 100% free with the Gemini free tier."
     },
     {
       question: "What are the system requirements to run OpenShorts?",
       answer: "OpenShorts runs on any system with Docker installed. The recommended setup is 8GB+ RAM and a modern multi-core CPU. GPU acceleration (NVIDIA CUDA) is optional but speeds up video processing significantly. The Docker Compose setup handles all dependencies automatically — Python 3.11, FFmpeg, YOLOv8, MediaPipe, faster-whisper, and the React dashboard. It works on Linux, macOS, and Windows (via WSL2/Docker Desktop)."
+    },
+    {
+      question: "Is there a free open source clip generator?",
+      answer: "Yes — OpenShorts is a 100% free, open source clip generator. Unlike paid clip generators like Opus Clip ($15-228/month) or Kapwing ($24-79/month), OpenShorts lets you generate unlimited clips with no watermarks, no usage limits, and no subscription fees. It also includes a free AI YouTube thumbnail generator, free AI YouTube title generator, and free AI YouTube description generator — features that other clip generators charge extra for. You self-host it with Docker on your own machine for full privacy and control."
     }
   ];
 
@@ -201,7 +205,7 @@ export default function Landing({ onLaunchApp }) {
         <div className="max-w-5xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-1.5 text-sm text-primary mb-8">
             <Sparkles size={14} />
-            <span>Free & Open Source AI Video Clipping Tool</span>
+            <span>Free & Open Source AI Clip Generator</span>
           </div>
 
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 tracking-tight">
@@ -211,7 +215,7 @@ export default function Landing({ onLaunchApp }) {
           </h1>
 
           <p className="hero-description text-lg md:text-xl text-zinc-400 max-w-3xl mx-auto mb-10 leading-relaxed">
-            OpenShorts uses Google Gemini 3.0 Flash AI to automatically detect viral moments in your videos and transform them into 9:16 clips ready for TikTok, Instagram Reels, and YouTube Shorts. Smart face-tracking cropping, auto subtitles, AI voice dubbing in 30+ languages, and AI YouTube thumbnail generation. Self-hosted, no watermarks, no limits. All APIs have free tiers.
+            OpenShorts is a free open source clip generator powered by Google Gemini 3.0 Flash AI. It automatically detects viral moments and transforms them into 9:16 clips ready for TikTok, Instagram Reels, and YouTube Shorts. Smart face-tracking cropping, auto subtitles, AI dubbing in 30+ languages, plus a free AI YouTube Studio — generate thumbnails, viral titles, descriptions with chapters, and publish directly to YouTube. Self-hosted, no watermarks, no limits.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
@@ -280,8 +284,8 @@ export default function Landing({ onLaunchApp }) {
       <section id="features" className="py-20 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Everything You Need to Create Viral Shorts</h2>
-            <p className="text-zinc-400 max-w-2xl mx-auto">A complete AI-powered pipeline from long-form video to viral short clips. No manual editing, no video editing skills required.</p>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Free AI Clip Generator with YouTube Studio Built In</h2>
+            <p className="text-zinc-400 max-w-2xl mx-auto">A complete open source clip generator with a full AI-powered pipeline — from viral moment detection to a free YouTube thumbnail generator, AI titles, descriptions, and one-click publishing. No manual editing required.</p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
             {features.map((feature, i) => (
@@ -376,8 +380,8 @@ export default function Landing({ onLaunchApp }) {
       <section id="comparison" className="py-20 px-6 bg-surface/20">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">OpenShorts vs Paid Alternatives</h2>
-            <p className="text-zinc-400 max-w-2xl mx-auto">Why pay $15-228/month for AI video clipping when you can self-host the same capabilities for free? According to G2 reviews, content creators spend an average of $50-150/month on video repurposing tools.</p>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Free Clip Generator vs Paid Alternatives</h2>
+            <p className="text-zinc-400 max-w-2xl mx-auto">Why pay $15-228/month for an AI clip generator when you can self-host the same capabilities for free? OpenShorts includes a free YouTube thumbnail generator, AI title suggestions, and auto descriptions — features that paid tools charge extra for.</p>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -468,8 +472,8 @@ export default function Landing({ onLaunchApp }) {
       {/* CTA Section */}
       <section className="py-20 px-6">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Start Creating Viral Shorts for Free</h2>
-          <p className="text-zinc-400 mb-8 max-w-xl mx-auto">No sign-up, no credit card, no watermarks. Self-host OpenShorts with Docker and start turning your long videos into viral content today.</p>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Start Using the Free Open Source Clip Generator</h2>
+          <p className="text-zinc-400 mb-8 max-w-xl mx-auto">No sign-up, no credit card, no watermarks. Self-host OpenShorts with Docker and start generating viral clips, AI YouTube thumbnails, titles, and descriptions — all for free.</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
               onClick={onLaunchApp}
@@ -496,7 +500,7 @@ export default function Landing({ onLaunchApp }) {
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <img src="/logo-openshorts.png" alt="OpenShorts" className="w-6 h-6" />
-            <span className="text-sm text-zinc-400">OpenShorts — Free Open Source AI Video Clipping Tool</span>
+            <span className="text-sm text-zinc-400">OpenShorts — Free Open Source Clip Generator with AI YouTube Studio</span>
           </div>
           <div className="flex items-center gap-6 text-sm text-zinc-500">
             <a href="https://github.com/mutonby/openshorts" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">GitHub</a>
