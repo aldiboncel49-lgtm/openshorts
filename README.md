@@ -22,6 +22,8 @@ Turn long YouTube videos or local uploads into viral-ready 9:16 shorts for TikTo
 
 ![Clip Generator](screenshots/clip-generator.png)
 
+![Clip Results](screenshots/clip-results.png)
+
 ### 2. AI Shorts (UGC Video Creator)
 Generate marketing videos with AI actors for **any product or business**. No camera, no studio, no influencer budget. Just describe your product or paste a URL.
 
