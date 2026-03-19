@@ -21,6 +21,14 @@ export default defineConfig({
       '/thumbnails': {
         target: 'http://backend:8000',
         changeOrigin: true,
+      },
+      '/gallery': {
+        target: 'http://backend:8000',
+        changeOrigin: true,
+      },
+      '/video': {
+        target: 'http://backend:8000',
+        changeOrigin: true,
       }
     }
   }

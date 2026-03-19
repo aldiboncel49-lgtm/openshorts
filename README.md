@@ -1,143 +1,224 @@
-# OpenShorts.app 🚀🎬
+# OpenShorts.app
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Open Source](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://opensource.org/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
-OpenShorts is an all-in-one open-source solution to automate the creation and distribution of viral vertical content. It transforms long YouTube videos or local files into high-potential short clips optimized for **TikTok**, **Instagram Reels**, and **YouTube Shorts**.
+**Free & open source AI video platform** with 3 tools in one: **Clip Generator**, **AI Shorts (UGC videos with AI actors)**, and **YouTube Studio**. Self-hosted with Docker. No watermarks, no limits.
 
 ![OpenShorts Demo](https://github.com/kamilstanuch/Autocrop-vertical/blob/main/churchil_queen_vertical_short.gif?raw=true)
 
-### 📺 Video Tutorial: How it works
+### Video Tutorial: How it works
 [![OpenShorts Tutorial](https://img.youtube.com/vi/xlyjD1qCaX0/maxresdefault.jpg)](https://www.youtube.com/watch?v=xlyjD1qCaX0 "Click to watch the video on YouTube")
 
 *Click the image above to watch the full walkthrough.*
 
 ---
 
-## ✨ Key Features
+## 3 Tools in 1 Platform
 
-OpenShorts leverages state-of-the-art AI to handle the entire content lifecycle:
+### 1. Clip Generator
+Turn long YouTube videos or local uploads into viral-ready 9:16 shorts for TikTok, Instagram Reels, and YouTube Shorts.
 
-1.  **🧠 Viral Moment Detection:**
-    *   **Faster-Whisper**: High-speed, CPU-optimized transcription and word-level timestamps.
-    *   **Google Gemini 2.0 Flash**: Advanced AI analysis to identify the 3-15 most viral moments based on hooks and engagement potential.
-    *   **Automatic Copywriting**: Generates SEO-optimized titles and descriptions for all platforms.
+![Clip Generator](screenshots/clip-generator.png)
 
-2.  **✂️ Smart AI Cropping & Tracking (New V2 Engine):**
-    *   **Dual-Mode Strategy**: Automatically detects scene composition to apply the best framing strategy.
-        *   **TRACK Mode (Single Subject)**: Uses **MediaPipe Face Detection** + **YOLOv8** fallback for ultra-fast, robust subject tracking. Features a **"Heavy Tripod" stabilization engine** that eliminates jitter and unnatural movements, providing smooth, cinematic reframing. Includes **Speaker Identification** to stick to the active speaker and avoid erratic switching.
-        *   **GENERAL Mode (Groups/Landscapes)**: For scenes with multiple people or no clear subject, it automatically switches to a professional **blurred-background layout**, preserving the full width of the original shot while filling the 9:16 vertical space.
-    *   **Intelligent Scene Analysis**: Pre-scans every scene to determine the optimal strategy before processing.
+### 2. AI Shorts (UGC Video Creator)
+Generate marketing videos with AI actors for **any product or business**. No camera, no studio, no influencer budget. Just describe your product or paste a URL.
 
-3.  **☁️ Automated S3 Backup:**
-    *   **Silent Background Upload**: Once clips are generated, they are automatically uploaded to an AWS S3 bucket.
-    *   **Seamless Integration**: Operates in the background without affecting processing logs or UI performance.
+![AI Shorts Setup](screenshots/ai-shorts.png)
 
-4.  **📲 Direct Social Posting:**
-    *   **Upload-Post Integration**: Share your generated clips directly to TikTok, Instagram, and YouTube with a single click.
-    *   **Profile Selector**: Manage multiple social accounts easily through the dashboard.
+- **Two cost modes**: Low Cost (~$0.65/video) and Premium (~$2/video)
+- Works for any business: SaaS, restaurants, e-commerce, coaching, local businesses
+- AI-generated actors with lip-sync, voiceover, b-roll, and TikTok-style subtitles
+- Choose from a shared avatar gallery or upload your own photo
+- Publish directly to TikTok, Instagram, and YouTube
 
-5.  **🎙️ AI Voice Dubbing:**
-    *   **ElevenLabs Integration**: Translate your clips to 30+ languages with AI-powered voice dubbing.
-    *   **Voice Cloning**: Preserves the original speaker's voice characteristics in the new language.
-    *   **Auto-Subtitles**: Automatically generates subtitles in the dubbed language.
+### 3. YouTube Studio
+Complete free AI YouTube toolkit: thumbnails, titles, descriptions, and direct publishing.
 
-6.  **🎨 Modern Web Dashboard:**
-    *   **Real-time Progress**: Watch clips appear as they are generated with a live results feed.
-    *   **Log Streaming**: Follow the technical process with real-time log updates.
-    *   **Responsive Design**: A premium, dark-mode glassmorphism interface.
+![YouTube Studio](screenshots/youtube-studio.png)
 
-7.  **📺 YouTube Studio (Full Publishing Pipeline):**
-    *   **AI Title Generation**: Upload a video and let Gemini analyze the transcript to suggest viral, SEO-optimized titles with AI-ranked top picks.
-    *   **Title Refinement Chat**: Iteratively refine suggested titles via a built-in chat interface — ask for more clickbait, different tone, etc.
-    *   **AI Thumbnail Generation**: Generate professional thumbnails with optional face overlay, custom background, and extra creative instructions.
-    *   **AI Description with Chapters**: Automatically generates a YouTube description with chapter timestamps derived from the Whisper transcript.
-    *   **One-Click YouTube Publishing**: Publish the final video with its title, thumbnail, and description directly to YouTube via Upload-Post integration.
-    *   **Manual Mode**: Skip video analysis and enter your own title to jump straight to thumbnail generation.
+- AI thumbnail generator with face overlay
+- 10 viral title suggestions with refinement chat
+- Auto-generated descriptions with chapter timestamps
+- One-click publish to YouTube
+
+### UGC Video Gallery
+All generated videos and avatars are saved to a public gallery with SEO pages for each video.
+
+![UGC Gallery](screenshots/ugc-gallery.png)
+
+- Public gallery page with hover-to-play (`/gallery`)
+- Individual SEO video pages with og:video meta tags (`/video/{id}`)
+- JSON-LD structured data for search engines
+- Avatar gallery with prompt history
 
 ---
 
-## 🛠️ Requirements
+## Key Features
 
-*   **Docker & Docker Compose**.
-*   **Google Gemini API Key** ([Get it for free here](https://aistudio.google.com/app/apikey)).
-*   **Upload-Post API Key** (Optional, for direct social posting. **Free tier available, no credit card required**).
-*   **ElevenLabs API Key** (Optional, for AI voice dubbing. [Get it here](https://elevenlabs.io)).
+### Clip Generator
+- **Viral Moment Detection**: Google Gemini 3.0 Flash analyzes transcripts and scene boundaries to detect 3-15 high-potential moments
+- **Smart 9:16 Cropping**: Dual-mode AI reframing — TRACK mode (MediaPipe + YOLOv8 face tracking) and GENERAL mode (blurred background)
+- **Auto Subtitles**: faster-whisper with word-level timestamps, styled and burned into clips
+- **AI Voice Dubbing**: ElevenLabs integration for 30+ languages with voice cloning
+- **Hook Text Overlays**: AI-generated attention-grabbing text overlays
+- **AI Video Effects**: Gemini-generated FFmpeg filters for professional effects
 
-### 📲 Social Media Setup (Upload-Post)
-To enable direct posting, follow these steps:
-1.  **Login/Register**: [app.upload-post.com/login](https://app.upload-post.com/login)
-2.  **Create Profile**: Go to [Manage Users](https://app.upload-post.com/manage-users) and create a user profile.
-3.  **Connect Accounts**: In the same section, connect your TikTok, Instagram, or YouTube accounts to that profile.
-4.  **Get API Key**: Navigate to [API Keys](https://app.upload-post.com/api-keys) and generate your key.
-5.  **Use in OpenShorts**: Paste the API Key and select your Profile in the dashboard.
-    
+### AI Shorts Pipeline
+1. **Analyze**: Scrape website URL + web research, or generate from manual description
+2. **Script**: AI writes viral scripts (hook - problem - solution - CTA format)
+3. **Actor**: Generate AI actors with Flux 2 Pro or select from shared gallery
+4. **Voice**: ElevenLabs TTS voiceover (English/Spanish, male/female)
+5. **Video**: Talking head generation (Hailuo 2.3 Fast img2video + VEED Lipsync)
+6. **B-roll**: AI-generated visuals with Ken Burns effect
+7. **Composite**: FFmpeg final assembly with subtitles and hook overlays
+8. **Publish**: Direct posting to TikTok, Instagram Reels, YouTube Shorts via Upload-Post
 
-### ☁️ AWS S3 Setup (Optional)
-To enable automatic backup of your clips to S3:
-1. **Environment Variables**: Set the following in your `.env` file or system environment:
-    * `AWS_ACCESS_KEY_ID`: Your AWS access key.
-    * `AWS_SECRET_ACCESS_KEY`: Your AWS secret key.
-    * `AWS_REGION`: (Optional) Defaults to `us-east-1`.
-    * `AWS_S3_BUCKET`: (Optional) Defaults to `openshorts.app-clips`.
-2. **Bucket**: Clips are uploaded to the specified bucket automatically after generation.
+### YouTube Studio
+- AI-powered title generation with 10 viral options
+- Interactive refinement chat for titles
+- AI thumbnail generation with custom face + background
+- Auto descriptions with chapter timestamps from Whisper transcript
+- Direct YouTube publishing via Upload-Post
 
+### Social Publishing
+- One-click posting to TikTok, Instagram Reels, and YouTube Shorts
+- Schedule posts for later
+- Upload-Post integration with async uploads
+
+### Infrastructure
+- S3 cloud backup (private bucket for clips, public bucket for gallery/avatars)
+- SEO gallery pages served by FastAPI with JSON-LD structured data
+- Shared avatar gallery across all users
+- Async job queue with configurable concurrency
 
 ---
 
-## 🚀 Getting Started
+## Requirements
 
-The easiest way to run OpenShorts is using Docker Compose.
+- **Docker & Docker Compose**
+- **Google Gemini API Key** ([Free — get it here](https://aistudio.google.com/app/apikey)) — required for all AI features
+- **fal.ai API Key** ([Pay-per-use](https://fal.ai)) — required for AI Shorts (actor generation, video, lip-sync)
+- **ElevenLabs API Key** ([Free tier](https://elevenlabs.io)) — required for voiceover/dubbing
+- **Upload-Post API Key** (Optional, [free tier](https://upload-post.com)) — for direct social posting
 
-### 1. Setup
+---
+
+## Getting Started
+
+### 1. Clone
 ```bash
 git clone https://github.com/your-username/OpenShorts.git
 cd OpenShorts
 ```
 
-### 2. Launch the Application
+### 2. Configure (optional)
+```bash
+cp .env.example .env
+# Edit .env with your AWS keys for S3 backup
+```
+
+### 3. Launch
 ```bash
 docker compose up --build
 ```
 
-### 3. Access the Dashboard
-Open your browser and navigate to:
-**`http://localhost:5173`**
+### 4. Open Dashboard
+Navigate to **`http://localhost:5175`**
 
-1.  Enter your **Gemini API Key**.
-2.  (Optional) Enter your **Upload-Post API Key** to enable social sharing.
-3.  Paste a **YouTube URL** or **Upload a Video**.
-4.  Click **"Generate Clips"** and watch the magic happen!
-
----
-
-## 🏗️ Technical Pipeline
-
-1.  **Ingestion**: Downloads YouTube videos via `yt-dlp` or handles local uploads.
-2.  **Transcription**: `faster-whisper` converts audio to text in seconds.
-3.  **AI Intelligence**: Gemini reads the transcript and selects periods of high interest.
-4.  **Extraction**: FFmpeg precisely cuts the selected segments.
-5.  **Reframing**: AI-powered visual tracking crops clips to vertical format.
-6.  **Backup**: Automated silent upload of clips and metadata to AWS S3.
-7.  **Distribution**: One-click posting via Upload-Post API.
-8.  **YouTube Studio**: Full publishing pipeline — AI titles, thumbnails, descriptions with chapters, and direct YouTube upload.
+1. Go to **Settings** and enter your API keys (Gemini, fal.ai, ElevenLabs, Upload-Post)
+2. **Clip Generator**: Paste a YouTube URL or upload a video to generate viral shorts
+3. **AI Shorts**: Describe your product or paste a URL to generate UGC marketing videos
+4. **YouTube Studio**: Generate thumbnails, titles, and descriptions for YouTube
+5. **UGC Gallery**: Browse all generated videos and avatars
 
 ---
 
-## 🔒 Security & Performance
+## Technical Pipeline
 
-*   **Non-Root Execution**: Containers run as a dedicated `appuser` for security.
-*   **Concurrency Control**: Configurable job queue (`MAX_CONCURRENT_JOBS`).
-*   **Auto-Cleanup**: Automatic purging of old jobs and temporary files.
-*   **File Limits**: Built-in protection against oversized uploads.
+### Clip Generator
+1. **Ingest** — YouTube download (yt-dlp) or local upload
+2. **Transcribe** — faster-whisper with word-level timestamps
+3. **Detect** — PySceneDetect for scene boundaries
+4. **Analyze** — Gemini identifies 3-15 viral moments (15-60s each)
+5. **Extract** — FFmpeg precise clip cutting
+6. **Reframe** — AI vertical cropping with subject tracking
+7. **Effects** — Subtitles, hooks, AI video effects
+8. **Publish** — S3 backup + Upload-Post social distribution
+
+### AI Shorts
+1. **Analyze** — Website scraping + Gemini web research (or manual description)
+2. **Script** — Gemini generates viral scripts with segments
+3. **Actor** — Flux 2 Pro portrait generation (or gallery/upload)
+4. **Voice** — ElevenLabs TTS voiceover
+5. **Video** — Hailuo 2.3 Fast img2video + VEED Lipsync (Low Cost) or Kling Avatar v2 (Premium)
+6. **B-roll** — Flux 2 Pro image generation + Ken Burns effect
+7. **Composite** — FFmpeg assembly with ASS subtitles and hook overlays
+8. **Gallery** — Upload to public S3 with metadata for SEO pages
+9. **Publish** — Upload-Post to TikTok, Instagram, YouTube
 
 ---
 
-## 🤝 Contributions
+## Tech Stack
 
-Contributions are welcome! Whether it's adding new AI models or improving the cropping engine, feel free to open a PR.
+| Layer | Technology |
+|-------|-----------|
+| Backend | Python 3.11, FastAPI, google-genai, faster-whisper, ultralytics (YOLOv8), mediapipe, opencv-python, yt-dlp, FFmpeg, httpx |
+| Frontend | React 18, Vite 4, Tailwind CSS 3.4 |
+| AI APIs | Google Gemini, fal.ai (Flux, Hailuo, VEED, Kling), ElevenLabs |
+| Infrastructure | Docker + Docker Compose, AWS S3 |
+| Publishing | Upload-Post API (TikTok, Instagram, YouTube) |
 
-## 📄 License
+---
+
+## Environment Variables
+
+**Server-side (.env):**
+| Variable | Description |
+|----------|------------|
+| `AWS_ACCESS_KEY_ID` | AWS access key for S3 |
+| `AWS_SECRET_ACCESS_KEY` | AWS secret key |
+| `AWS_REGION` | AWS region (default: us-east-1) |
+| `AWS_S3_BUCKET` | Private bucket for clip backup |
+| `AWS_S3_PUBLIC_BUCKET` | Public bucket for gallery/avatars |
+| `MAX_CONCURRENT_JOBS` | Concurrent processing limit (default: 5) |
+
+**Client-side (encrypted in localStorage):**
+| Key | Description |
+|-----|------------|
+| `GEMINI_API_KEY` | Google Gemini — required |
+| `FAL_KEY` | fal.ai — required for AI Shorts |
+| `ELEVENLABS_API_KEY` | ElevenLabs — required for voiceover/dubbing |
+| `UPLOAD_POST_API_KEY` | Upload-Post — optional, for social posting |
+
+---
+
+## Security & Performance
+
+- **Non-Root Execution**: Containers run as dedicated `appuser`
+- **Concurrency Control**: Semaphore-based job queue (`MAX_CONCURRENT_JOBS`)
+- **Auto-Cleanup**: Automatic purging of old jobs (1h retention)
+- **Encrypted Keys**: API keys encrypted client-side, never stored server-side
+- **Upload Validation**: Image uploads validated for format and minimum size
+- **File Limits**: 2GB upload limit protection
+
+---
+
+## Social Media Setup (Upload-Post)
+
+1. **Register**: [app.upload-post.com/login](https://app.upload-post.com/login)
+2. **Create Profile**: Go to [Manage Users](https://app.upload-post.com/manage-users)
+3. **Connect Accounts**: Link TikTok, Instagram, and/or YouTube
+4. **Get API Key**: Navigate to [API Keys](https://app.upload-post.com/api-keys)
+5. **Use in OpenShorts**: Paste the key in Settings
+
+---
+
+## Contributions
+
+Contributions are welcome! Whether it's adding new AI models, improving the lip-sync pipeline, or building new features — feel free to open a PR.
+
+## License
 
 MIT License. OpenShorts is yours to use, modify, and scale.

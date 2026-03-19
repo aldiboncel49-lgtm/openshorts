@@ -404,8 +404,8 @@ Use natural casual American English like a real person on TikTok. Contractions, 
 Examples of English UGC hooks: "Okay so I just found this tool and...", "Stop doing this manually, there's a better way", "I can't believe nobody told me about this sooner..."
 """
 
-    prompt = f"""You are a viral short-form video scriptwriter specializing in SaaS B2B marketing.
-Generate {num_scripts} video scripts for TikTok/Instagram Reels.
+    prompt = f"""You are a viral short-form video scriptwriter for TikTok/Instagram Reels.
+Generate {num_scripts} video scripts to promote this product/business.
 {lang_instructions}
 PRODUCT ANALYSIS:
 {json.dumps(analysis, indent=2)}
@@ -671,10 +671,11 @@ def _fal_upload_file(file_path: str, fal_key: str) -> str:
 
 
 def generate_actor_images(
-    description: str, fal_key: str, output_dir: str, title_slug: str, num_options: int = 3
+    description: str, fal_key: str, output_dir: str, title_slug: str, num_options: int = 3,
+    product_description: str = None,
 ) -> List[str]:
-    """Generate multiple hyper-realistic actor portrait options using Recraft V4."""
-    print(f"[SaaSShorts] 🎨 Generating {num_options} actor image options (Recraft V4)...")
+    """Generate multiple hyper-realistic actor portrait options using Flux 2 Pro."""
+    print(f"[SaaSShorts] 🎨 Generating {num_options} actor image options (Flux 2 Pro)...")
 
     # Clean description: strip scene/actions, keep only physical appearance
     clean_desc = description
@@ -686,7 +687,13 @@ def generate_actor_images(
 
     import random
     img_num = random.randint(1000, 9999)
-    prompt = f"""IMG_{img_num}.jpg Raw candid selfie of {clean_desc}, sitting at their desk at home, looking at camera with a relaxed natural smile. Headphones around neck, monitor glow behind them. Not posed, casual and real. Low quality front camera, soft room lighting. Reddit selfie."""
+
+    if product_description:
+        prompt = f"""IMG_{img_num}.jpg Raw candid selfie of {clean_desc}, casually holding {product_description}, showing it to the camera with a natural smile. Product clearly visible in hand. Casual and real, not an ad. Low quality front camera, soft room lighting. Reddit selfie."""
+    else:
+        prompt = f"""IMG_{img_num}.jpg Raw candid selfie of {clean_desc}, sitting at their desk at home, looking at camera with a relaxed natural smile. Headphones around neck, monitor glow behind them. Not posed, casual and real. Low quality front camera, soft room lighting. Reddit selfie."""
+
+    print(f"[SaaSShorts]   Prompt: {prompt[:120]}...{' (with product)' if product_description else ''}")
 
     paths = []
     # Flux 2 Pro — #1 for photorealistic faces
@@ -700,7 +707,7 @@ def generate_actor_images(
                 "seed": random.randint(0, 999999),
             },
             fal_key,
-            timeout=180,
+            timeout=300,
         )
         images = result.get("images") or result.get("output", [])
         if not images:
@@ -855,6 +862,89 @@ def generate_talking_head(
     return output_path
 
 
+def generate_talking_head_lowcost(
+    image_path: str,
+    audio_path: str,
+    fal_key: str,
+    output_path: str,
+) -> str:
+    """
+    Low-cost talking head: Hailuo 2.3 Fast img2video → VEED Lipsync.
+    ~$0.39 vs ~$1.69 for Kling Avatar v2.
+    """
+    print(f"[SaaSShorts] 🗣️ Generating talking head (Low Cost: Hailuo + VEED Lipsync)...")
+
+    # Step 1: Generate 6s video from image using MiniMax Hailuo 2.3 Fast ($0.19)
+    # Cache the Hailuo clip so retries don't re-generate it
+    hailuo_cache_path = output_path.replace(".mp4", "_hailuo_cache.mp4")
+
+    if os.path.exists(hailuo_cache_path) and os.path.getsize(hailuo_cache_path) > 0:
+        print(f"[SaaSShorts]   Hailuo clip cached, skipping generation.")
+        hailuo_video_url = _fal_upload_file(hailuo_cache_path, fal_key)
+    else:
+        image_url = _fal_upload_file(image_path, fal_key)
+
+        hailuo_result = _fal_run(
+            "fal-ai/minimax/hailuo-2.3-fast/standard/image-to-video",
+            {
+                "image_url": image_url,
+                "prompt": (
+                    "Person talking to camera, subtle head nods and natural micro-expressions. "
+                    "Gentle head movement, slight shoulder sway. Eye contact with camera. "
+                    "Natural blinking. Soft ambient lighting. Smooth cinematic motion."
+                ),
+            },
+            fal_key,
+            timeout=300,
+        )
+
+        print(f"[SaaSShorts]   Hailuo response keys: {list(hailuo_result.keys())}")
+        if "video" in hailuo_result:
+            hailuo_video_url = hailuo_result["video"]["url"] if isinstance(hailuo_result["video"], dict) else hailuo_result["video"]
+        elif "video_url" in hailuo_result:
+            hailuo_video_url = hailuo_result["video_url"]
+        elif "output" in hailuo_result:
+            hailuo_video_url = hailuo_result["output"]["url"] if isinstance(hailuo_result["output"], dict) else hailuo_result["output"]
+        else:
+            raise Exception(f"No video in Hailuo result: {hailuo_result}")
+
+        # Save Hailuo clip locally for retry cache
+        with httpx.Client(timeout=180.0) as client:
+            vid_resp = client.get(hailuo_video_url)
+            with open(hailuo_cache_path, "wb") as f:
+                f.write(vid_resp.content)
+
+        print(f"[SaaSShorts]   Hailuo 2.3 Fast 6s clip ready (cached for retry).")
+
+    # Step 2: Upload audio for lip-sync
+    audio_url = _fal_upload_file(audio_path, fal_key)
+
+    # Step 3: VEED Lipsync — high quality lip-sync with loop ($0.20 for 30s)
+    lipsync_result = _fal_run(
+        "veed/lipsync",
+        {
+            "video_url": hailuo_video_url,
+            "audio_url": audio_url,
+        },
+        fal_key,
+        timeout=900,
+    )
+
+    print(f"[SaaSShorts]   VEED Lipsync response keys: {list(lipsync_result.keys())}")
+    if "video" in lipsync_result:
+        lipsync_video_url = lipsync_result["video"]["url"] if isinstance(lipsync_result["video"], dict) else lipsync_result["video"]
+    else:
+        raise Exception(f"No video in VEED Lipsync result: {lipsync_result}")
+
+    with httpx.Client(timeout=180.0) as client:
+        vid_resp = client.get(lipsync_video_url)
+        with open(output_path, "wb") as f:
+            f.write(vid_resp.content)
+
+    print(f"[SaaSShorts] ✅ Talking head (low cost): {output_path}")
+    return output_path
+
+
 def generate_broll(
     prompt: str, fal_key: str, output_path: str, duration: str = "5"
 ) -> str:
@@ -875,7 +965,7 @@ def generate_broll(
             "safety_tolerance": 5,
         },
         fal_key,
-        timeout=180,
+        timeout=300,
     )
 
     # Flux 2 Pro returns images in "images" or "output" key
@@ -1281,9 +1371,14 @@ def generate_full_video(
         log("[2/6] ✅ Using cached assets.")
 
     # ── Step 3: Generate talking head ──
+    video_mode = config.get("video_mode", "premium")
     if not _exists(talking_head):
-        log("[3/6] Generating talking head video (Kling Avatar v2)... This takes 2-5 minutes.")
-        talking_head = generate_talking_head(actor_img, audio_path, fal_key, talking_head)
+        if video_mode == "lowcost":
+            log("[3/6] Generating talking head (Low Cost: Hailuo + VEED Lipsync)... This takes 2-5 minutes.")
+            talking_head = generate_talking_head_lowcost(actor_img, audio_path, fal_key, talking_head)
+        else:
+            log("[3/6] Generating talking head video (Kling Avatar v2)... This takes 2-5 minutes.")
+            talking_head = generate_talking_head(actor_img, audio_path, fal_key, talking_head)
         log("[3/6] Talking head ready.")
     else:
         log("[3/6] ✅ Talking head cached, skipping.")
@@ -1350,13 +1445,23 @@ def generate_full_video(
 
     # Cost estimate
     audio_duration = _get_media_duration(audio_path)
-    cost = {
-        "actor_image_flux": 0.05,
-        "voiceover_elevenlabs": round(len(full_narration) * 0.00003, 3),
-        "talking_head_kling": round(audio_duration * 0.056, 2),
-        "broll_kling": round(len(broll_clips) * 5 * 0.07, 2),
-        "ffmpeg_compositing": 0.00,
-    }
+    if video_mode == "lowcost":
+        cost = {
+            "actor_image_flux": 0.05,
+            "voiceover_elevenlabs": round(len(full_narration) * 0.00003, 3),
+            "hailuo_img2video": 0.19,
+            "veed_lipsync": 0.20,
+            "broll_flux": round(len(broll_clips) * 0.05, 2),
+            "ffmpeg_compositing": 0.00,
+        }
+    else:
+        cost = {
+            "actor_image_flux": 0.05,
+            "voiceover_elevenlabs": round(len(full_narration) * 0.00003, 3),
+            "talking_head_kling": round(audio_duration * 0.056, 2),
+            "broll_kling": round(len(broll_clips) * 5 * 0.07, 2),
+            "ffmpeg_compositing": 0.00,
+        }
     cost["total"] = round(sum(cost.values()), 2)
 
     return {

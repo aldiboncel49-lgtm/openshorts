@@ -7,6 +7,7 @@ import ProcessingAnimation from './components/ProcessingAnimation';
 // import Gallery from './components/Gallery';
 import ThumbnailStudio from './components/ThumbnailStudio';
 import SaaShortsTab from './components/SaaShortsTab';
+import UGCGallery from './components/UGCGallery';
 import { getApiUrl } from './config';
 
 // Enhanced "Encryption" using XOR + Base64 with a Salt
@@ -377,7 +378,7 @@ function App() {
           className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-colors ${activeTab === 'dashboard' ? 'bg-primary/10 text-primary' : 'text-zinc-400 hover:text-white hover:bg-white/5'}`}
         >
           <LayoutDashboard size={20} />
-          <span className="font-medium hidden lg:block">Dashboard</span>
+          <span className="font-medium hidden lg:block">Clip Generator</span>
         </button>
 
         <button
@@ -385,7 +386,15 @@ function App() {
           className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-colors ${activeTab === 'saasshorts' ? 'bg-violet-500/10 text-violet-400' : 'text-zinc-400 hover:text-white hover:bg-white/5'}`}
         >
           <Sparkles size={20} />
-          <span className="font-medium hidden lg:block">SaaS Shorts</span>
+          <span className="font-medium hidden lg:block">AI Shorts</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('ugc-gallery')}
+          className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-colors ${activeTab === 'ugc-gallery' ? 'bg-violet-500/10 text-violet-400' : 'text-zinc-400 hover:text-white hover:bg-white/5'}`}
+        >
+          <LayoutGrid size={20} />
+          <span className="font-medium hidden lg:block">UGC Gallery</span>
         </button>
 
         <button
@@ -615,12 +624,12 @@ function App() {
 
               <div className="glass-panel p-6 mt-8">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-semibold">SaaS Shorts (AI Actors)</h2>
+                  <h2 className="text-lg font-semibold">AI Shorts (UGC Videos)</h2>
                   <span className="text-[10px] bg-violet-500/10 border border-violet-500/20 px-2 py-0.5 rounded text-violet-400 uppercase tracking-wider">New</span>
                 </div>
                 <p className="text-xs text-zinc-500 mb-6 leading-relaxed">
-                  Generate UGC-style videos with AI actors for your SaaS using <strong>fal.ai</strong> (Flux image generation + Kling lip-sync).
-                  Requires a fal.ai API key. ElevenLabs key (above) is also needed for voiceover.
+                  Generate UGC-style videos with AI actors for any product or business using <strong>fal.ai</strong>.
+                  Just describe your product or paste a URL. Requires fal.ai + ElevenLabs API keys.
                 </p>
                 <div className="space-y-4">
                   <label className="block text-sm text-zinc-400">fal.ai API Key</label>
@@ -668,7 +677,12 @@ function App() {
 
           {/* View: SaaS Shorts */}
           {activeTab === 'saasshorts' && (
-            <SaaShortsTab geminiApiKey={apiKey} elevenLabsKey={elevenLabsKey} falKey={falKey} />
+            <SaaShortsTab geminiApiKey={apiKey} elevenLabsKey={elevenLabsKey} falKey={falKey} uploadPostKey={uploadPostKey} uploadUserId={uploadUserId} />
+          )}
+
+          {/* View: UGC Gallery */}
+          {activeTab === 'ugc-gallery' && (
+            <UGCGallery />
           )}
 
           {/* View: Thumbnails */}
