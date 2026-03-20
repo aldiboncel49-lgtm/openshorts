@@ -156,6 +156,7 @@ function App() {
 
   const [uploadUserId, setUploadUserId] = useState(() => localStorage.getItem('uploadUserId') || '');
   const [userProfiles, setUserProfiles] = useState([]); // List of {username, connected: []}
+  const [showKeyModal, setShowKeyModal] = useState(false);
   const [jobId, setJobId] = useState(null);
   const [status, setStatus] = useState('idle'); // idle, processing, complete, error
   const [results, setResults] = useState(null);
@@ -318,6 +319,10 @@ function App() {
   };
 
   const handleProcess = async (data) => {
+    if (!apiKey) {
+      setShowKeyModal(true);
+      return;
+    }
     setStatus('processing');
     setLogs(["Starting process..."]);
     setResults(null);
@@ -830,6 +835,67 @@ function App() {
 
         </div>
       </main>
+
+      {/* Missing API Key Modal */}
+      {showKeyModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShowKeyModal(false)}>
+          <div className="bg-[#18181b] border border-white/10 rounded-2xl p-6 max-w-md w-full mx-4 space-y-4 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-lg font-bold text-white">Gemini API Key Required</h2>
+            <p className="text-sm text-zinc-400">
+              You need a Google Gemini API key to use the Clip Generator. It's free and takes 30 seconds to get.
+            </p>
+            <div className="bg-white/5 border border-white/10 rounded-lg p-4 space-y-2">
+              <p className="text-xs font-semibold text-zinc-300">How to get your free key:</p>
+              <ol className="text-xs text-zinc-400 space-y-1 list-decimal list-inside">
+                <li>Go to <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-blue-400 underline">aistudio.google.com/app/apikey</a></li>
+                <li>Sign in with your Google account</li>
+                <li>Click "Create API Key"</li>
+                <li>Copy the key and paste it below</li>
+              </ol>
+            </div>
+            <input
+              type="text"
+              placeholder="Paste your Gemini API key here..."
+              className="w-full bg-black/50 border border-white/20 rounded-lg px-4 py-2.5 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-blue-500"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && e.target.value.trim()) {
+                  setApiKey(e.target.value.trim());
+                  setShowKeyModal(false);
+                }
+              }}
+            />
+
+            {/* Upload-Post info */}
+            <div className="bg-violet-500/5 border border-violet-500/20 rounded-lg p-4 space-y-2">
+              <p className="text-xs font-semibold text-violet-300">Optional: Auto-publish to social media</p>
+              <p className="text-xs text-zinc-400">
+                With an <strong className="text-zinc-300">Upload-Post</strong> API key you can publish your clips directly to TikTok, Instagram Reels, and YouTube Shorts — or schedule them for later. Free tier available, no credit card needed.
+              </p>
+              <ol className="text-xs text-zinc-400 space-y-1 list-decimal list-inside">
+                <li>Register at <a href="https://app.upload-post.com/login" target="_blank" rel="noopener noreferrer" className="text-violet-400 underline">app.upload-post.com</a></li>
+                <li>Connect your TikTok, Instagram, or YouTube accounts</li>
+                <li>Go to API Keys and generate one</li>
+                <li>Paste it in Settings — done!</li>
+              </ol>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowKeyModal(false)}
+                className="flex-1 text-sm text-zinc-400 py-2 rounded-lg border border-white/10 hover:bg-white/5 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => { setShowKeyModal(false); setActiveTab('settings'); }}
+                className="flex-1 text-sm text-white py-2 rounded-lg bg-blue-600 hover:bg-blue-500 transition-colors font-medium"
+              >
+                Go to Settings
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
