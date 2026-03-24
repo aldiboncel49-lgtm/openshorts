@@ -9,7 +9,7 @@
 
 **Free & open source AI video platform** with 3 tools in one: **Clip Generator**, **AI Shorts (UGC videos with AI actors)**, and **YouTube Studio**. Self-hosted with Docker. No watermarks, no limits.
 
-<video src="https://github.com/kamilstanuch/Autocrop-vertical/blob/main/demo-openshorts.mp4?raw=true" autoplay loop muted playsinline width="100%"></video>
+https://github.com/mutonby/openshorts/raw/main/demo-openshorts.mp4
 
 ### Video Tutorial: How it works
 [![OpenShorts Tutorial](https://img.youtube.com/vi/xlyjD1qCaX0/maxresdefault.jpg)](https://www.youtube.com/watch?v=xlyjD1qCaX0 "Click to watch the video on YouTube")
