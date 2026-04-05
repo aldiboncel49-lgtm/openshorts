@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Upload, FileVideo, Sparkles, Youtube, Instagram, Share2, LogOut, ChevronDown, Check, Activity, LayoutDashboard, Settings, PlusCircle, History, Menu, X, Terminal, Shield, LayoutGrid, Image, Globe, RotateCcw } from 'lucide-react';
+import { Upload, FileVideo, Sparkles, Youtube, Instagram, Share2, LogOut, ChevronDown, Check, Activity, LayoutDashboard, Settings, PlusCircle, History, Menu, X, Terminal, Shield, LayoutGrid, Image, Globe, RotateCcw, Calendar } from 'lucide-react';
 import KeyInput from './components/KeyInput';
 import MediaInput from './components/MediaInput';
 import ResultCard from './components/ResultCard';
@@ -8,6 +8,7 @@ import ProcessingAnimation from './components/ProcessingAnimation';
 import ThumbnailStudio from './components/ThumbnailStudio';
 import SaaShortsTab from './components/SaaShortsTab';
 import UGCGallery from './components/UGCGallery';
+import ScheduleWeekModal from './components/ScheduleWeekModal';
 import { getApiUrl } from './config';
 
 // Enhanced "Encryption" using XOR + Base64 with a Salt
@@ -166,6 +167,7 @@ function App() {
   const [activeTab, setActiveTab] = useState('dashboard'); // dashboard, settings
 
   const [sessionRecovered, setSessionRecovered] = useState(false);
+  const [showScheduleWeek, setShowScheduleWeek] = useState(false);
 
   // Sync state for original video playback
   const [syncedTime, setSyncedTime] = useState(0);
@@ -795,6 +797,15 @@ function App() {
                       ${results.cost_analysis.total_cost.toFixed(5)}
                     </span>
                   )}
+                  {results?.clips?.length > 1 && status === 'complete' && (
+                    <button
+                      onClick={() => setShowScheduleWeek(true)}
+                      className="ml-auto flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-purple-500/20 to-indigo-500/20 hover:from-purple-500/30 hover:to-indigo-500/30 border border-purple-500/30 text-purple-300 hover:text-purple-200 rounded-full text-xs font-bold transition-all"
+                    >
+                      <Calendar size={14} />
+                      Programar Semana
+                    </button>
+                  )}
                 </h2>
 
                 <div className="flex-1 overflow-y-auto custom-scrollbar p-1">
@@ -901,6 +912,15 @@ function App() {
           </div>
         </div>
       )}
+
+      <ScheduleWeekModal
+        isOpen={showScheduleWeek}
+        onClose={() => setShowScheduleWeek(false)}
+        clips={results?.clips || []}
+        jobId={jobId}
+        uploadPostKey={uploadPostKey}
+        uploadUserId={uploadUserId}
+      />
     </div>
   );
 }
