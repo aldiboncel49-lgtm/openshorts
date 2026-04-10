@@ -4,12 +4,14 @@ import { getApiUrl } from '../config';
 import SubtitleModal from './SubtitleModal';
 import HookModal from './HookModal';
 import TranslateModal from './TranslateModal';
+import { renderInBrowser } from '../lib/renderInBrowser';
 
 export default function ResultCard({ clip, index, jobId, uploadPostKey, uploadUserId, geminiApiKey, elevenLabsKey, onPlay, onPause }) {
     const [showModal, setShowModal] = useState(false);
     const [showSubtitleModal, setShowSubtitleModal] = useState(false);
     const videoRef = React.useRef(null);
-    const [currentVideoUrl, setCurrentVideoUrl] = useState(getApiUrl(clip.video_url));
+    const originalVideoUrl = getApiUrl(clip.video_url); // Never changes — used for Remotion previews
+    const [currentVideoUrl, setCurrentVideoUrl] = useState(originalVideoUrl);
 
     const [platforms, setPlatforms] = useState({
         tiktok: true,
@@ -32,6 +34,22 @@ export default function ResultCard({ clip, index, jobId, uploadPostKey, uploadUs
     const [showTranslateModal, setShowTranslateModal] = useState(false);
     const [editError, setEditError] = useState(null);
 
+    const [clipDuration, setClipDuration] = useState(clip.end && clip.start ? clip.end - clip.start : 30);
+
+    // Accumulate Remotion layers across operations
+    const [activeLayers, setActiveLayers] = useState({ subtitles: null, hook: null, effects: null });
+
+    // Fetch clip duration from transcript endpoint
+    useEffect(() => {
+        if (!jobId || index === undefined) return;
+        fetch(getApiUrl(`/api/clip/${jobId}/${index}/transcript`))
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (data && data.durationSec) setClipDuration(data.durationSec);
+            })
+            .catch(() => {});
+    }, [jobId, index]);
+
     // Initialize/Reset form when modal opens
     useEffect(() => {
         if (showModal) {
@@ -47,13 +65,36 @@ export default function ResultCard({ clip, index, jobId, uploadPostKey, uploadUs
         setIsEditing(true);
         setEditError(null);
         try {
-            // Use passed prop or fallback
             const apiKey = geminiApiKey || localStorage.getItem('gemini_key');
 
             if (!apiKey) {
                 throw new Error("Gemini API Key is missing. Please set it in Settings.");
             }
 
+            // Try Remotion effects endpoint first
+            const effectsRes = await fetch(getApiUrl('/api/effects/generate'), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Gemini-Key': apiKey
+                },
+                body: JSON.stringify({
+                    job_id: jobId,
+                    clip_index: index,
+                    input_filename: currentVideoUrl.split('/').pop()
+                })
+            });
+
+            if (effectsRes.ok) {
+                const data = await effectsRes.json();
+                if (data.effects && data.effects.segments) {
+                    setCompositionParams(prev => ({ ...prev, effects: data.effects }));
+                    setShowPreviewModal(true);
+                    return;
+                }
+            }
+
+            // Fallback: legacy FFmpeg edit endpoint
             const res = await fetch(getApiUrl('/api/edit'), {
                 method: 'POST',
                 headers: {
@@ -80,7 +121,6 @@ export default function ResultCard({ clip, index, jobId, uploadPostKey, uploadUs
             const data = await res.json();
             if (data.new_video_url) {
                 setCurrentVideoUrl(getApiUrl(data.new_video_url));
-                // Reload video
                 if (videoRef.current) {
                     videoRef.current.load();
                 }
@@ -98,6 +138,24 @@ export default function ResultCard({ clip, index, jobId, uploadPostKey, uploadUs
         setIsSubtitling(true);
         setEditError(null);
         try {
+            if (options.remotion) {
+                // Accumulate layer and render all layers together
+                const newLayers = { ...activeLayers, subtitles: options.remotion };
+                setActiveLayers(newLayers);
+                const blobUrl = await renderInBrowser({
+                    videoUrl: originalVideoUrl,
+                    durationInSeconds: clipDuration,
+                    subtitles: newLayers.subtitles,
+                    hook: newLayers.hook,
+                    effects: newLayers.effects,
+                });
+                setCurrentVideoUrl(blobUrl);
+                if (videoRef.current) videoRef.current.load();
+                setShowSubtitleModal(false);
+                return;
+            }
+
+            // Fallback: legacy FFmpeg
             const res = await fetch(getApiUrl('/api/subtitle'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -116,20 +174,13 @@ export default function ResultCard({ clip, index, jobId, uploadPostKey, uploadUs
                 })
             });
 
-            if (!res.ok) {
-                const errText = await res.text();
-                throw new Error(errText);
-            }
-
+            if (!res.ok) throw new Error(await res.text());
             const data = await res.json();
             if (data.new_video_url) {
                 setCurrentVideoUrl(getApiUrl(data.new_video_url));
-                if (videoRef.current) {
-                    videoRef.current.load();
-                }
+                if (videoRef.current) videoRef.current.load();
                 setShowSubtitleModal(false);
             }
-
         } catch (e) {
             setEditError(e.message);
             setTimeout(() => setEditError(null), 5000);
@@ -142,7 +193,24 @@ export default function ResultCard({ clip, index, jobId, uploadPostKey, uploadUs
         setIsHooking(true);
         setEditError(null);
         try {
-            // Support both string (legacy) and object
+            if (hookData.remotion) {
+                // Accumulate layer and render all layers together
+                const newLayers = { ...activeLayers, hook: hookData.remotion };
+                setActiveLayers(newLayers);
+                const blobUrl = await renderInBrowser({
+                    videoUrl: originalVideoUrl,
+                    durationInSeconds: clipDuration,
+                    subtitles: newLayers.subtitles,
+                    hook: newLayers.hook,
+                    effects: newLayers.effects,
+                });
+                setCurrentVideoUrl(blobUrl);
+                if (videoRef.current) videoRef.current.load();
+                setShowHookModal(false);
+                return;
+            }
+
+            // Fallback: legacy FFmpeg
             const payload = typeof hookData === 'string'
                 ? { text: hookData, position: 'top', size: 'M' }
                 : hookData;
@@ -160,20 +228,13 @@ export default function ResultCard({ clip, index, jobId, uploadPostKey, uploadUs
                 })
             });
 
-            if (!res.ok) {
-                const errText = await res.text();
-                throw new Error(errText);
-            }
-
+            if (!res.ok) throw new Error(await res.text());
             const data = await res.json();
             if (data.new_video_url) {
                 setCurrentVideoUrl(getApiUrl(data.new_video_url));
-                if (videoRef.current) {
-                    videoRef.current.load();
-                }
+                if (videoRef.current) videoRef.current.load();
                 setShowHookModal(false);
             }
-
         } catch (e) {
             setEditError(e.message);
             setTimeout(() => setEditError(null), 5000);
@@ -584,7 +645,10 @@ export default function ResultCard({ clip, index, jobId, uploadPostKey, uploadUs
                 onClose={() => setShowSubtitleModal(false)}
                 onGenerate={handleSubtitle}
                 isProcessing={isSubtitling}
-                videoUrl={currentVideoUrl}
+                videoUrl={originalVideoUrl}
+                jobId={jobId}
+                clipIndex={index}
+                existingHook={activeLayers.hook}
             />
 
             <HookModal
@@ -592,8 +656,10 @@ export default function ResultCard({ clip, index, jobId, uploadPostKey, uploadUs
                 onClose={() => setShowHookModal(false)}
                 onGenerate={handleHook}
                 isProcessing={isHooking}
-                videoUrl={currentVideoUrl}
+                videoUrl={originalVideoUrl}
                 initialText={clip.viral_hook_text}
+                durationInSeconds={clip.end && clip.start ? clip.end - clip.start : 30}
+                existingSubtitles={activeLayers.subtitles}
             />
 
             <TranslateModal
@@ -604,6 +670,7 @@ export default function ResultCard({ clip, index, jobId, uploadPostKey, uploadUs
                 videoUrl={currentVideoUrl}
                 hasApiKey={!!elevenLabsKey}
             />
+
         </div>
     );
 }

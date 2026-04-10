@@ -15,6 +15,12 @@ ENV/
 *.egg-info/
 .pytest_cache/
 
+# Node
+node_modules/
+remotion/node_modules/
+render-service/node_modules/
+dashboard/node_modules/
+
 # IDE
 .idea/
 .vscode/

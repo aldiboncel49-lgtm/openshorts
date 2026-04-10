@@ -150,6 +150,101 @@ class VideoEditor:
             print(f"❌ Failed to parse JSON: {response.text}")
             return None
 
+    def get_effects_config(self, video_file_obj, duration, fps=30, width=None, height=None, transcript=None):
+        """Asks Gemini for a structured EffectsConfig JSON for Remotion rendering."""
+        if width is None or height is None:
+            width, height = 1080, 1920
+
+        transcript_text = json.dumps(transcript) if transcript else "Not available."
+
+        prompt = f"""
+        You are an expert video editor analyzing a video and its transcript to generate dynamic visual effects for a Remotion-based renderer.
+
+        Video Duration: {duration} seconds.
+        Video FPS: {fps}
+        Video Resolution: {width}x{height}
+
+        TRANSCRIPT (Context of what is being said):
+        {transcript_text}
+
+        Your task is to produce a structured JSON describing time-based effect segments that cover the FULL video duration.
+
+        Each segment has these fields:
+        - "startSec" (number): Start time in seconds.
+        - "endSec" (number): End time in seconds.
+        - "zoom" (number): Zoom level. 1.0 = no zoom, max 1.5. Use subtle values like 1.05-1.2 for most cases.
+        - "zoomCenterX" (number): Horizontal focus point for zoom, 0.0 (left) to 1.0 (right). 0.5 = center.
+        - "zoomCenterY" (number): Vertical focus point for zoom, 0.0 (top) to 1.0 (bottom). 0.5 = center.
+        - "brightness" (number): Brightness multiplier. 1.0 = normal. Range 0.8-1.2.
+        - "contrast" (number): Contrast multiplier. 1.0 = normal. Range 0.8-1.3.
+        - "saturate" (number): Saturation multiplier. 1.0 = normal. Range 0.8-1.3.
+
+        Instructions:
+        1. ANALYZE the video content and transcript to understand mood, pacing, and key moments.
+        2. Apply CONTEXTUAL effects aligned with speech and action:
+           - Use slow, subtle zooms toward the speaker's face during speaking moments.
+           - Emphasize key moments, punchlines, or dramatic beats with slightly stronger zoom or contrast.
+           - Keep transitions smooth — avoid jarring jumps between segments.
+           - If nothing significant is happening, keep values at defaults (zoom 1.0, all multipliers 1.0).
+        3. Segments MUST cover the entire video duration from 0 to {duration} seconds with no gaps.
+        4. Prefer fewer, longer segments with gradual changes over many rapid short segments.
+        5. Output ONLY valid JSON, no explanations.
+
+        Output format:
+        {{
+            "segments": [
+                {{
+                    "startSec": 0,
+                    "endSec": 3.5,
+                    "zoom": 1.0,
+                    "zoomCenterX": 0.5,
+                    "zoomCenterY": 0.5,
+                    "brightness": 1.0,
+                    "contrast": 1.0,
+                    "saturate": 1.0
+                }}
+            ]
+        }}
+        """
+
+        print("🤖 Asking Gemini for Remotion effects config...")
+        response = self.client.models.generate_content(
+            model=self.model_name,
+            contents=[video_file_obj, prompt],
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json"
+            )
+        )
+
+        print(f"🔍 DEBUG: Gemini Raw Response:\n{response.text}")
+
+        try:
+            # Clean response text (remove potential markdown blocks)
+            text = response.text
+            if text.startswith("```json"):
+                text = text[7:]
+            elif text.startswith("```"):
+                text = text[3:]
+
+            if text.endswith("```"):
+                text = text[:-3]
+
+            text = text.strip()
+
+            # Find the first '{' and last '}'
+            start_idx = text.find('{')
+            end_idx = text.rfind('}')
+
+            if start_idx != -1 and end_idx != -1:
+                text = text[start_idx:end_idx+1]
+
+            print(f"🔍 DEBUG: Cleaned JSON Text:\n{text}")
+
+            return json.loads(text)
+        except json.JSONDecodeError:
+            print(f"❌ Failed to parse effects config JSON: {response.text}")
+            return None
+
     @staticmethod
     def _split_filter_chain(filter_string: str) -> list[str]:
         """Split a -vf filter chain on commas, respecting single-quoted substrings."""

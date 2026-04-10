@@ -532,6 +532,191 @@ class SubtitleRequest(BaseModel):
     bg_opacity: float = 0.0
     input_filename: Optional[str] = None
 
+
+@app.get("/api/clip/{job_id}/{clip_index}/transcript")
+async def get_clip_transcript(job_id: str, clip_index: int):
+    """Return word-level captions for a specific clip, formatted for Remotion."""
+    if job_id not in jobs:
+        raise HTTPException(status_code=404, detail="Job not found")
+
+    output_dir = os.path.join(OUTPUT_DIR, job_id)
+    json_files = glob.glob(os.path.join(output_dir, "*_metadata.json"))
+
+    if not json_files:
+        raise HTTPException(status_code=404, detail="Metadata not found")
+
+    with open(json_files[0], 'r') as f:
+        data = json.load(f)
+
+    transcript = data.get('transcript')
+    if not transcript:
+        raise HTTPException(status_code=400, detail="Transcript not found in metadata")
+
+    clips = data.get('shorts', [])
+    if clip_index >= len(clips):
+        raise HTTPException(status_code=404, detail="Clip not found")
+
+    clip_data = clips[clip_index]
+    clip_start = clip_data.get('start', 0)
+    clip_end = clip_data.get('end', 0)
+
+    # Extract words within clip range and convert to CaptionWord format
+    captions = []
+    for segment in transcript.get('segments', []):
+        for word_info in segment.get('words', []):
+            if word_info['end'] > clip_start and word_info['start'] < clip_end:
+                captions.append({
+                    "text": word_info.get('word', '').strip(),
+                    "startMs": int((max(0, word_info['start'] - clip_start)) * 1000),
+                    "endMs": int((max(0, word_info['end'] - clip_start)) * 1000),
+                })
+
+    duration_sec = clip_end - clip_start
+
+    return {
+        "captions": captions,
+        "durationSec": duration_sec,
+        "language": transcript.get('language', 'en'),
+    }
+
+
+# --- Remotion Render Proxy ---
+RENDER_SERVICE_URL = os.getenv("RENDER_SERVICE_URL", "http://renderer:3100")
+
+@app.post("/api/render")
+async def proxy_render(request: Request):
+    """Proxy render requests to the Node.js Remotion render service."""
+    import httpx
+    body = await request.json()
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            resp = await client.post(f"{RENDER_SERVICE_URL}/render", json=body)
+            return resp.json()
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"Render service unavailable: {e}")
+
+@app.get("/api/render/{render_id}")
+async def proxy_render_status(render_id: str):
+    """Proxy render status polling to the Node.js Remotion render service."""
+    import httpx
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            resp = await client.get(f"{RENDER_SERVICE_URL}/render/{render_id}")
+            return resp.json()
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"Render service unavailable: {e}")
+
+
+class EffectsGenerateRequest(BaseModel):
+    job_id: str
+    clip_index: int
+    input_filename: Optional[str] = None
+
+@app.post("/api/effects/generate")
+async def generate_effects_config(
+    req: EffectsGenerateRequest,
+    x_gemini_key: Optional[str] = Header(None, alias="X-Gemini-Key")
+):
+    """Generate structured EffectsConfig JSON for Remotion rendering via Gemini AI."""
+    final_api_key = x_gemini_key or os.environ.get("GEMINI_API_KEY")
+
+    if not final_api_key:
+        raise HTTPException(status_code=400, detail="Missing Gemini API Key (Header)")
+
+    if req.job_id not in jobs:
+        raise HTTPException(status_code=404, detail="Job not found")
+
+    job = jobs[req.job_id]
+    if 'result' not in job or 'clips' not in job['result']:
+        raise HTTPException(status_code=400, detail="Job result not available")
+
+    try:
+        # Resolve input path
+        if req.input_filename:
+            safe_name = os.path.basename(req.input_filename)
+            input_path = os.path.join(OUTPUT_DIR, req.job_id, safe_name)
+        else:
+            clip = job['result']['clips'][req.clip_index]
+            filename = clip['video_url'].split('/')[-1]
+            input_path = os.path.join(OUTPUT_DIR, req.job_id, filename)
+
+        if not os.path.exists(input_path):
+            raise HTTPException(status_code=404, detail=f"Video file not found: {input_path}")
+
+        def run_effects_generation():
+            editor = VideoEditor(api_key=final_api_key)
+
+            # Create safe ASCII filename to avoid encoding issues
+            safe_filename = f"temp_effects_{req.job_id}.mp4"
+            safe_input_path = os.path.join(OUTPUT_DIR, req.job_id, safe_filename)
+            shutil.copy(input_path, safe_input_path)
+
+            try:
+                # Upload video to Gemini
+                vid_file = editor.upload_video(safe_input_path)
+
+                # Get video metadata via ffprobe
+                probe_cmd = [
+                    'ffprobe', '-v', 'error',
+                    '-select_streams', 'v:0',
+                    '-show_entries', 'stream=width,height,r_frame_rate,duration',
+                    '-show_entries', 'format=duration',
+                    '-of', 'json',
+                    safe_input_path
+                ]
+                probe_result = subprocess.check_output(probe_cmd).decode().strip()
+                probe_data = json.loads(probe_result)
+
+                stream = probe_data.get('streams', [{}])[0]
+                width = int(stream.get('width', 1080))
+                height = int(stream.get('height', 1920))
+
+                # Parse fps from r_frame_rate (e.g. "30/1")
+                r_frame_rate = stream.get('r_frame_rate', '30/1')
+                num, den = r_frame_rate.split('/')
+                fps = round(int(num) / int(den), 2)
+
+                # Get duration from stream or format
+                duration = float(stream.get('duration', 0))
+                if duration == 0:
+                    duration = float(probe_data.get('format', {}).get('duration', 0))
+
+                # Load transcript from metadata
+                transcript = None
+                try:
+                    meta_files = glob.glob(os.path.join(OUTPUT_DIR, req.job_id, "*_metadata.json"))
+                    if meta_files:
+                        with open(meta_files[0], 'r') as f:
+                            data = json.load(f)
+                            transcript = data.get('transcript')
+                except Exception as e:
+                    print(f"⚠️ Could not load transcript for effects config: {e}")
+
+                # Generate effects config
+                effects_config = editor.get_effects_config(
+                    vid_file, duration, fps=fps, width=width, height=height, transcript=transcript
+                )
+
+                return effects_config
+            finally:
+                if os.path.exists(safe_input_path):
+                    os.remove(safe_input_path)
+
+        loop = asyncio.get_event_loop()
+        effects_config = await loop.run_in_executor(None, run_effects_generation)
+
+        if effects_config is None:
+            raise HTTPException(status_code=500, detail="Failed to generate effects config from Gemini")
+
+        return {"effects": effects_config}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ Effects Generation Error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.post("/api/subtitle")
 async def add_subtitles(req: SubtitleRequest):
     if req.job_id not in jobs:
