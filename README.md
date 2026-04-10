@@ -286,6 +286,10 @@ Navigate to **`http://localhost:5175`**
 
 ---
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=mutonby/openshorts&type=Date)](https://star-history.com/#mutonby/openshorts&Date)
+
 ## Contributions
 
 Contributions are welcome! Whether it's adding new AI models, improving the lip-sync pipeline, or building new features — feel free to open a PR.
