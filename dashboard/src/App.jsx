@@ -453,7 +453,7 @@ function App() {
           </div>
         </a>
         <a
-          href="https://github.com/mutonby/openshorts"
+          href="https://github.com/aldiboncel49-lgtm/openshorts"
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center gap-2 p-3 bg-white/5 hover:bg-white/10 rounded-xl transition-colors group"
@@ -795,13 +795,13 @@ function App() {
                 <div className="glass-panel p-6 md:p-8 space-y-5">
                   <div className="flex items-start justify-between gap-4 flex-wrap">
                     <div>
-                      <h2 className="text-xl font-bold text-white mb-1">skill-autoshorts</h2>
+                      <h2 className="text-xl font-bold text-white mb-1">OpenShorts</h2>
                       <p className="text-sm text-zinc-400">
-                        The Claude Code skill that powers this workflow. Install it once and trigger it whenever you want a fresh batch of clips.
+                        AI-powered vertical video generator. Clone it, run it, generate clips.
                       </p>
                     </div>
                     <a
-                      href="https://github.com/mutonby/skill-autoshorts"
+                      href="https://github.com/aldiboncel49-lgtm/openshorts"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="btn-primary py-2 px-4 text-sm flex items-center gap-2 shrink-0"
@@ -811,9 +811,9 @@ function App() {
                   </div>
 
                   <div className="bg-[#0c0c0e] border border-white/10 rounded-lg p-4 font-mono text-xs text-zinc-300 flex items-center justify-between gap-3">
-                    <span className="truncate">git clone https://github.com/mutonby/skill-autoshorts</span>
+                    <span className="truncate">git clone https://github.com/aldiboncel49-lgtm/openshorts</span>
                     <button
-                      onClick={() => navigator.clipboard.writeText('git clone https://github.com/mutonby/skill-autoshorts')}
+                      onClick={() => navigator.clipboard.writeText('git clone https://github.com/aldiboncel49-lgtm/openshorts')}
                       className="text-zinc-500 hover:text-white transition-colors shrink-0"
                       title="Copy"
                     >

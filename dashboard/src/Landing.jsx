@@ -204,7 +204,7 @@ export default function Landing({ onLaunchApp }) {
           </div>
           <div className="flex items-center gap-3">
             <a
-              href="https://github.com/mutonby/openshorts"
+              href="https://github.com/aldiboncel49-lgtm/openshorts"
               target="_blank"
               rel="noopener noreferrer"
               className="hidden sm:flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors"
@@ -249,7 +249,7 @@ export default function Landing({ onLaunchApp }) {
               <ArrowRight size={20} />
             </button>
             <a
-              href="https://github.com/mutonby/openshorts"
+              href="https://github.com/aldiboncel49-lgtm/openshorts"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 bg-white/5 border border-white/10 text-white px-8 py-3.5 rounded-xl font-medium transition-all hover:bg-white/10 text-lg"
@@ -580,7 +580,7 @@ export default function Landing({ onLaunchApp }) {
               <ArrowRight size={20} />
             </button>
             <a
-              href="https://github.com/mutonby/openshorts"
+              href="https://github.com/aldiboncel49-lgtm/openshorts"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors text-sm"
@@ -600,7 +600,7 @@ export default function Landing({ onLaunchApp }) {
             <span className="text-sm text-zinc-400">OpenShorts — Free Open Source Clip Generator & AI UGC Video Creator</span>
           </div>
           <div className="flex items-center gap-6 text-sm text-zinc-500">
-            <a href="https://github.com/mutonby/openshorts" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">GitHub</a>
+            <a href="https://github.com/aldiboncel49-lgtm/openshorts" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">GitHub</a>
             <a href="#features" className="hover:text-white transition-colors">Features</a>
             <a href="#faq" className="hover:text-white transition-colors">FAQ</a>
             <a href="#legal" className="hover:text-white transition-colors">Terms & Privacy</a>
